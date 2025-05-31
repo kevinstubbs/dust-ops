@@ -7,8 +7,7 @@ contract Delegation {
     emit Log('Hello, world!');
   }
 
-  function ping() external returns (uint256) {
+  function ping() external {
     emit Log('Pong!');
-    return address(this).balance;
   }
 }
