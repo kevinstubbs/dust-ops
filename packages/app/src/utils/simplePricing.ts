@@ -108,9 +108,48 @@ export async function getTokenPrice(
 export async function getMultipleTokenPrices(
   tokens: Array<{ contractAddress: string; name: string; chain: string }>
 ): Promise<TokenPriceInfo[]> {
+  // Check if we have any native ETH tokens that might benefit from improved pricing
+  const hasNativeETH = tokens.some(t => t.contractAddress === '0x0000000000000000000000000000000000000000')
+  
+  if (hasNativeETH) {
+    console.log('Native ETH detected, trying improved pricing first...')
+    try {
+      const improvedResults = await getImprovedPricing(tokens)
+      if (improvedResults && improvedResults.length > 0) {
+        console.log('Improved pricing successful')
+        return improvedResults
+      }
+    } catch (error) {
+      console.log('Improved pricing failed, falling back to standard pricing:', error)
+    }
+  }
+  
   // Skip client-side pricing and go directly to server-side due to CORS restrictions
-  console.log('Using server-side pricing due to CORS restrictions')
+  console.log('Using standard server-side pricing')
   return await getMultipleTokenPricesServerSide(tokens)
+}
+
+async function getImprovedPricing(
+  tokens: Array<{ contractAddress: string; name: string; chain: string }>
+): Promise<TokenPriceInfo[]> {
+  try {
+    const response = await fetch('/api/improved-prices', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(tokens)
+    })
+
+    if (!response.ok) {
+      throw new Error(`Improved pricing API error: ${response.status}`)
+    }
+
+    return await response.json()
+  } catch (error) {
+    console.error('Improved pricing failed:', error)
+    throw error
+  }
 }
 
 async function getMultipleTokenPricesServerSide(
