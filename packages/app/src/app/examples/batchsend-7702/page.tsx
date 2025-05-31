@@ -11,9 +11,13 @@ import { useState, useEffect } from 'react'
 import { createWalletClient, encodeFunctionData, http, parseEther } from 'viem'
 import { useNotifications } from '@/context/Notifications'
 import { formatBalance } from '@/utils/format'
-import { signAuthorization, waitForTransactionReceipt } from 'viem/actions'
+import {
+  //  signAuthorization,
+  waitForTransactionReceipt,
+} from 'viem/actions'
 import { privateKeyToAccount } from 'viem/accounts'
-import { foundry, sepolia } from 'viem/chains'
+import { foundry } from 'viem/chains'
+import { verifyAuthorization } from 'viem/utils'
 
 const batchCallDelegationAbi = [
   {
@@ -51,13 +55,7 @@ const receivers = [
 
 export const abi = [
   { type: 'function', name: 'initialize', inputs: [], outputs: [], stateMutability: 'payable' },
-  {
-    type: 'function',
-    name: 'ping',
-    inputs: [],
-    outputs: [{ name: '', type: 'uint256', internalType: 'uint256' }],
-    stateMutability: 'nonpayable',
-  },
+  { type: 'function', name: 'ping', inputs: [], outputs: [], stateMutability: 'nonpayable' },
   {
     type: 'event',
     name: 'Log',
@@ -108,29 +106,43 @@ export default function Batchsend7702() {
   useEffect(() => {
     ;(async function () {
       try {
-        const eoa = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
+        const eoa = privateKeyToAccount(process.env.NEXT_PUBLIC_SECRET as any)
 
-        const walletClient = createWalletClient({
+        const eoaClient = createWalletClient({
           account: eoa,
           chain: foundry,
           transport: http(),
         })
+        const contractAddress = '0x287da1D560CC66F6A686E9E2723eB7A21DE35422'
         // 1. Authorize designation of the Contract onto the EOA.
-        const authorization = await walletClient.signAuthorization({
+        const authorization = await eoaClient.signAuthorization({
           account: eoa,
-          contractAddress: '0xec8eEef80bda591e5f909c39C743EC437B8D9e17',
+          contractAddress,
+          // executor: 'self',
         })
 
-        console.log({ authorization })
-        // 2. Designate the Contract on the EOA, and invoke the
-        //    `initialize` function.
-        const hash = await walletClient.sendTransaction({
+        const valid = await verifyAuthorization({
+          address: eoa.address,
+          authorization,
+        })
+
+        console.log({ authorization, valid })
+
+        // const hash = await eoaClient.writeContract({
+        //   abi,
+        //   address: eoaClient.account.address,
+        //   authorizationList: [authorization],
+        //   functionName: 'initialize',
+        // })
+
+        const hash = await eoaClient.sendTransaction({
           authorizationList: [authorization],
           //                  ↑ 3. Pass the Authorization as a parameter.
           data: encodeFunctionData({
             abi,
             functionName: 'initialize',
           }),
+          type: 'eip7702',
           to: eoa.address,
         })
 
