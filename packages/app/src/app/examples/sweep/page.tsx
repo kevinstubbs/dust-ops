@@ -34,6 +34,7 @@ const batchCallDelegationAbi = [
   },
 ] as const
 
+// These are the 10 default addresses when forking.
 const receivers = [
   '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
   '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
@@ -47,13 +48,15 @@ const receivers = [
   '0xa0Ee7A142d267C1f36714E4a8F75612F20a79720',
 ] as const
 
+const tokens = []
+
 type Call = {
   data: `0x${string}`
   to: `0x${string}`
   value: bigint
 }
 
-export default function Batchsend7702() {
+export default function SweeperCell() {
   const [amount, setAmount] = useState('0.01')
   const { Add } = useNotifications()
   const { data: walletClient } = useWalletClient()
@@ -179,7 +182,7 @@ export default function Batchsend7702() {
 
   return (
     <div className='flex-column align-center'>
-      <h1 className='text-xl'>Batch Send ETH</h1>
+      <h1 className='text-xl'>Sweeper Cell</h1>
       <div className='flex-col m-2'>
         <label className='form-control w-full max-w-xs'>
           <div className='label'>

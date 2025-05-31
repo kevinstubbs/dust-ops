@@ -26,13 +26,13 @@ contract FauxTokenScript is Script {
       string memory name = string(abi.encodePacked('Token', bytes1(i + 65))); // 'A' = 65
       string memory symbol = string(abi.encodePacked(bytes1(i + 65), bytes1(i + 65), bytes1(i + 65))); // 'AAA' to 'ZZZ'
 
-      FauxToken ft = new FauxToken(name, symbol, 1_000 * 10 ** 18);
+      FauxToken ft = new FauxToken(name, symbol, 1_000 * 1e18);
       //   deployedTokens.push(ft);
 
       // Each token should transfer fewer than the one before.
       uint256 transferAmount = baseTransferAmount - (i * 100);
       console2.log(ft.totalSupply(), 'sending', transferAmount);
-      ft.transfer(TARGET, transferAmount * 10 ** 18);
+      ft.transfer(TARGET, transferAmount * 1e18);
     }
 
     // End
