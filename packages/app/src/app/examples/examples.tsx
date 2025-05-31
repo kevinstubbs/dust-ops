@@ -1,8 +1,15 @@
 import EtherIcon from '@/assets/icons/ethereum.png'
-import NotificationIcon from '@/assets/icons/notification.png'
+// import NotificationIcon from '@/assets/icons/notification.png'
 import TokenIcon from '@/assets/icons/token.png'
+import { GiMagicBroom } from 'react-icons/gi'
 
 export const EXAMPLE_ITEMS = [
+  {
+    title: 'Sweep with 7702',
+    description: 'Do it',
+    image: <GiMagicBroom className='w-20 h-20 text-yellow-200' />,
+    url: '/examples/batchsend-7702',
+  },
   {
     title: 'Send Ether',
     description: 'Sending Ether to another address is the most basic, common transaction that you can do.',
@@ -16,10 +23,10 @@ export const EXAMPLE_ITEMS = [
     image: TokenIcon.src,
     url: '/examples/send-token',
   },
-  {
-    title: 'Notifications',
-    description: 'This example is demonstrates how to use the notification system within Nexth.',
-    image: NotificationIcon.src,
-    url: '/examples/notifications',
-  },
+  // {
+  //   title: 'Notifications',
+  //   description: 'This example is demonstrates how to use the notification system within Nexth.',
+  //   image: NotificationIcon.src,
+  //   url: '/examples/notifications',
+  // },
 ]

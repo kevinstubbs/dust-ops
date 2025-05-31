@@ -8,6 +8,7 @@ const nextConfig = {
   images: {
     remotePatterns: [{ hostname: '*' }],
   },
+  devIndicators: false,
 }
 
 module.exports = nextConfig

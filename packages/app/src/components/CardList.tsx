@@ -1,11 +1,11 @@
-import React from 'react'
+import React, { ReactElement } from 'react'
 import Image from 'next/image'
 import { LinkComponent } from './LinkComponent'
 
 interface ListItemType {
   title: string
   description: string
-  image: string
+  image: string | ReactElement
   url?: string
 }
 
@@ -28,16 +28,20 @@ export function CardList(props: Props) {
             <div key={`${index}_${i.title}`} className='flex flex-row rounded-xl bg-base-200'>
               <div className='flex items-center justify-center shrink-0'>
                 <figure>
-                  <Image
-                    height={60}
-                    width={60}
-                    src={i.image}
-                    alt={i.title}
-                    placeholder='blur'
-                    blurDataURL='data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
-                    sizes='100vw'
-                    className='object-cover mx-8 opacity-50'
-                  />
+                  {typeof i.image === 'string' ? (
+                    <Image
+                      height={60}
+                      width={60}
+                      src={i.image}
+                      alt={i.title}
+                      placeholder='blur'
+                      blurDataURL='data:image/gif;base64,R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw=='
+                      sizes='100vw'
+                      className='object-cover mx-8 opacity-50'
+                    />
+                  ) : (
+                    <div className='mx-8'>{i.image}</div>
+                  )}
                 </figure>
               </div>
               <div className='py-8'>
