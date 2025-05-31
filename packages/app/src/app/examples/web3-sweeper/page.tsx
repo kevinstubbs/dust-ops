@@ -40,7 +40,7 @@ const mockTokens: Token[] = [
   { id: 6, symbol: 'LINK', name: 'Chainlink', chain: 'Ethereum', balance: '125.5', value: '$1,880.75', liquid: true, selected: true }
 ]
 
-export default function Home() {
+export default function Web3SweeperPage() {
   const [currentStep, setCurrentStep] = useState(0)
   const [tokensLoading, setTokensLoading] = useState(false)
   const [selectedTokens, setSelectedTokens] = useState<number[]>([])
@@ -106,7 +106,7 @@ export default function Home() {
   }, 0)
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-auto">
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white">
       <SweeperHeader walletConnected={isConnected} address={address} />
       
       {isConnected && (
@@ -151,4 +151,4 @@ export default function Home() {
       </div>
     </div>
   )
-}
+} 

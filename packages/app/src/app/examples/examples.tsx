@@ -3,8 +3,15 @@ import EtherIcon from '@/assets/icons/ethereum.png'
 import TokenIcon from '@/assets/icons/token.png'
 import { FaSkull } from 'react-icons/fa6'
 import { GiMagicBroom } from 'react-icons/gi'
+import { BoltIcon } from '@heroicons/react/24/outline'
 
 export const EXAMPLE_ITEMS = [
+  {
+    title: 'Web3 Sweeper',
+    description: 'Consolidate tokens across all EVM chains into ETH with privacy protection via Railgun',
+    image: <BoltIcon className='w-20 h-20 text-purple-400' />,
+    url: '/examples/web3-sweeper',
+  },
   {
     title: 'Sweep tokens',
     description: 'Do it',
