@@ -1,4 +1,5 @@
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
+import { useState } from 'react'
 import type { Token } from '@/app/page'
 
 interface TransactionReviewProps {
@@ -14,6 +15,14 @@ export function TransactionReview({
   totalValue, 
   onStartSweep 
 }: TransactionReviewProps) {
+  const [isToggled, setIsToggled] = useState(false)
+
+  const handleToggle = () => {
+    const newValue = !isToggled
+    setIsToggled(newValue)
+    return newValue
+  }
+
   return (
     <div className="py-8">
       <h2 className="text-3xl font-bold mb-8">Review Sweep Transaction</h2>
@@ -65,8 +74,19 @@ export function TransactionReview({
                 <span className="text-slate-400">Fresh Wallet:</span>
                 <span>Auto-generated</span>
               </div>
+              <button 
+                onClick={handleToggle}
+                className="w-full mt-4 bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/30 px-6 py-3 rounded-xl font-semibold transition-all duration-300 text-white hover:bg-white/15 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] backdrop-saturate-150"
+              >
+                <span className="flex items-center justify-center space-x-2">
+                  <span className={`w-2 h-2 rounded-full transition-colors duration-300 ${isToggled ? 'bg-green-400' : 'bg-slate-400'}`}></span>
+                  <span>{isToggled ? 'Advanced Mode Enabled' : 'Enable Advanced Mode'}</span>
+                </span>
+              </button>
             </div>
           </div>
+
+        
         </div>
 
         <div className="space-y-6">
