@@ -10,6 +10,7 @@ import { SweepProcessing } from '@/components/sweeper/SweepProcessing'
 import { SweepCompletion } from '@/components/sweeper/SweepCompletion'
 import { ProgressBar } from '@/components/sweeper/ProgressBar'
 import { SweeperHeader } from '@/components/sweeper/SweeperHeader'
+import { getTokenHoldings } from './actions/getHoldingsAction'
 
 export type Token = {
   id: number
@@ -22,58 +23,117 @@ export type Token = {
   selected: boolean
 }
 
-const steps = [
-  'Connect Wallet',
-  'Scan Holdings',
-  'Select Tokens',
-  'Review & Sweep',
-  'Privacy Deposit',
-  'Completion'
-]
+const steps = ['Connect Wallet', 'Scan Holdings', 'Select Tokens', 'Review & Sweep', 'Privacy Deposit', 'Completion']
 
 const mockTokens: Token[] = [
-  { id: 1, symbol: 'USDC', name: 'USD Coin', chain: 'Polygon', balance: '1,247.50', value: '$1,247.50', liquid: true, selected: true },
-  { id: 2, symbol: 'USDT', name: 'Tether', chain: 'BSC', balance: '892.33', value: '$892.33', liquid: true, selected: true },
-  { id: 3, symbol: 'DAI', name: 'Dai Stablecoin', chain: 'Arbitrum', balance: '445.67', value: '$445.67', liquid: true, selected: true },
-  { id: 4, symbol: 'WETH', name: 'Wrapped Ether', chain: 'Optimism', balance: '0.75', value: '$2,850.00', liquid: true, selected: true },
-  { id: 5, symbol: 'SHIB', name: 'Shiba Inu', chain: 'Ethereum', balance: '50,000,000', value: '$1,200.00', liquid: false, selected: false },
-  { id: 6, symbol: 'LINK', name: 'Chainlink', chain: 'Ethereum', balance: '125.5', value: '$1,880.75', liquid: true, selected: true }
+  {
+    id: 1,
+    symbol: 'USDC',
+    name: 'USD Coin',
+    chain: 'Polygon',
+    balance: '1,247.50',
+    value: '$1,247.50',
+    liquid: true,
+    selected: true,
+  },
+  {
+    id: 2,
+    symbol: 'USDT',
+    name: 'Tether',
+    chain: 'BSC',
+    balance: '892.33',
+    value: '$892.33',
+    liquid: true,
+    selected: true,
+  },
+  {
+    id: 3,
+    symbol: 'DAI',
+    name: 'Dai Stablecoin',
+    chain: 'Arbitrum',
+    balance: '445.67',
+    value: '$445.67',
+    liquid: true,
+    selected: true,
+  },
+  {
+    id: 4,
+    symbol: 'WETH',
+    name: 'Wrapped Ether',
+    chain: 'Optimism',
+    balance: '0.75',
+    value: '$2,850.00',
+    liquid: true,
+    selected: true,
+  },
+  {
+    id: 5,
+    symbol: 'SHIB',
+    name: 'Shiba Inu',
+    chain: 'Ethereum',
+    balance: '50,000,000',
+    value: '$1,200.00',
+    liquid: false,
+    selected: false,
+  },
+  {
+    id: 6,
+    symbol: 'LINK',
+    name: 'Chainlink',
+    chain: 'Ethereum',
+    balance: '125.5',
+    value: '$1,880.75',
+    liquid: true,
+    selected: true,
+  },
 ]
 
 export default function Home() {
   const [currentStep, setCurrentStep] = useState(0)
-  const [tokensLoading, setTokensLoading] = useState(false)
+  // const [tokensLoading, setTokensLoading] = useState(false)
   const [selectedTokens, setSelectedTokens] = useState<number[]>([])
-  const [sweepInProgress, setSweepInProgress] = useState(false)
+  // const [sweepInProgress, setSweepInProgress] = useState(false)
   const [tokens] = useState<Token[]>(mockTokens)
-  
+
   const { address, isConnected } = useAccount()
 
   // Initialize selected tokens with liquid tokens
   useEffect(() => {
-    setSelectedTokens(tokens.filter(t => t.liquid && t.selected).map(t => t.id))
+    setSelectedTokens(tokens.filter((t) => t.liquid && t.selected).map((t) => t.id))
   }, [tokens])
 
   // Handle wallet connection
   useEffect(() => {
     if (isConnected && currentStep === 0) {
       setCurrentStep(1)
-      setTokensLoading(true)
-      setTimeout(() => {
-        setTokensLoading(false)
-        setCurrentStep(2)
-      }, 2000)
+
+      console.log({ address })
+      if (!address) return
+
+      getTokenHoldings('0xD51deC1A693E497f01ec8D12054e1782127874bB')
+        .then(console.log)
+        .catch(console.error)
+        .finally(() => {
+          // setSweepInProgress(false)
+        })
+
+      // setTokensLoading(true)
+      // setTimeout(() => {
+      //   // setTokensLoading(false)
+      //   setCurrentStep(2)
+      // }, 2000)
     }
   }, [isConnected, currentStep])
 
   const connectWallet = () => {
     // This will be handled by the Connect component
     setCurrentStep(1)
-    setTokensLoading(true)
-    setTimeout(() => {
-      setTokensLoading(false)
-      setCurrentStep(2)
-    }, 2000)
+
+    // setTokensLoading(true)
+    // setTimeout(() => {
+    //   // setTokensLoading(false)
+    //   setCurrentStep(2)
+    // }, 2000)
   }
 
   const proceedToReview = () => {
@@ -81,46 +141,40 @@ export default function Home() {
   }
 
   const startSweep = () => {
-    setSweepInProgress(true)
+    // setSweepInProgress(true)
     setCurrentStep(4)
-    setTimeout(() => {
-      setCurrentStep(5)
-      setSweepInProgress(false)
-    }, 5000)
+
+    // const holdings = await getHoldingsAction(address)
+    // console.log('Token holdings:', holdings)
+
+    // setTimeout(() => {
+    //   setCurrentStep(5)
+    //   setSweepInProgress(false)
+    // }, 5000)
   }
 
   const toggleTokenSelection = (tokenId: number) => {
-    const token = tokens.find(t => t.id === tokenId)
+    const token = tokens.find((t) => t.id === tokenId)
     if (token?.liquid) {
-      setSelectedTokens(prev => 
-        prev.includes(tokenId) 
-          ? prev.filter(id => id !== tokenId)
-          : [...prev, tokenId]
-      )
+      setSelectedTokens((prev) => (prev.includes(tokenId) ? prev.filter((id) => id !== tokenId) : [...prev, tokenId]))
     }
   }
 
   const totalValue = selectedTokens.reduce((sum, tokenId) => {
-    const token = tokens.find(t => t.id === tokenId)
+    const token = tokens.find((t) => t.id === tokenId)
     return sum + parseFloat(token?.value.replace('$', '').replace(',', '') || '0')
   }, 0)
 
   return (
-    <div className="fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-auto">
+    <div className='fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-auto'>
       <SweeperHeader walletConnected={isConnected} address={address} />
-      
-      {isConnected && (
-        <ProgressBar steps={steps} currentStep={currentStep} />
-      )}
 
-      <div className="max-w-6xl mx-auto px-6 pb-12">
-        {currentStep === 0 && (
-          <WalletConnection onConnect={connectWallet} />
-        )}
+      {isConnected && <ProgressBar steps={steps} currentStep={currentStep} />}
 
-        {currentStep === 1 && (
-          <TokenScanning />
-        )}
+      <div className='max-w-6xl mx-auto px-6 pb-12'>
+        {currentStep === 0 && <WalletConnection onConnect={connectWallet} />}
+
+        {currentStep === 1 && <TokenScanning />}
 
         {currentStep === 2 && (
           <TokenSelection
@@ -141,13 +195,9 @@ export default function Home() {
           />
         )}
 
-        {currentStep === 4 && (
-          <SweepProcessing />
-        )}
+        {currentStep === 4 && <SweepProcessing />}
 
-        {currentStep === 5 && (
-          <SweepCompletion />
-        )}
+        {currentStep === 5 && <SweepCompletion />}
       </div>
     </div>
   )

@@ -7,24 +7,23 @@ interface ProgressBarProps {
 
 export function ProgressBar({ steps, currentStep }: ProgressBarProps) {
   return (
-    <div className="max-w-6xl mx-auto px-6 py-6">
-      <div className="flex items-center justify-between mb-2">
+    <div className='max-w-6xl mx-auto px-6 py-6'>
+      <div className='flex items-center justify-between mb-2'>
         {steps.map((step, index) => (
-          <div key={index} className="flex items-center">
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-              index <= currentStep ? 'bg-purple-500' : 'bg-slate-600'
-            }`}>
-              {index < currentStep ? <CheckIcon className="w-4 h-4" /> : index + 1}
+          <div key={index} className='flex items-center'>
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
+                index <= currentStep ? 'bg-purple-500' : 'bg-slate-600'
+              }`}>
+              {index < currentStep ? <CheckIcon className='w-4 h-4' /> : index + 1}
             </div>
             {index < steps.length - 1 && (
-              <div className={`w-16 h-1 mx-2 ${
-                index < currentStep ? 'bg-purple-500' : 'bg-slate-600'
-              }`}></div>
+              <div className={`w-16 h-1 mx-2 ${index < currentStep ? 'bg-purple-500' : 'bg-slate-600'}`}></div>
             )}
           </div>
         ))}
       </div>
-      <div className="flex justify-between text-xs text-slate-400">
+      <div className='flex justify-between text-xs text-slate-400 cursor-pointer'>
         {steps.map((step, index) => (
           <span key={index} className={index <= currentStep ? 'text-purple-300' : ''}>
             {step}
@@ -33,4 +32,4 @@ export function ProgressBar({ steps, currentStep }: ProgressBarProps) {
       </div>
     </div>
   )
-} 
+}

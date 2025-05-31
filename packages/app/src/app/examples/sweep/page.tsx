@@ -48,8 +48,6 @@ const receivers = [
   '0xa0Ee7A142d267C1f36714E4a8F75612F20a79720',
 ] as const
 
-const tokens = []
-
 type Call = {
   data: `0x${string}`
   to: `0x${string}`
