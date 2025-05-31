@@ -113,12 +113,14 @@ export default function Batchsend7702() {
           chain: foundry,
           transport: http(),
         })
+
         const contractAddress = '0x287da1D560CC66F6A686E9E2723eB7A21DE35422'
         // 1. Authorize designation of the Contract onto the EOA.
         const authorization = await eoaClient.signAuthorization({
           account: eoa,
           contractAddress,
-          // executor: 'self',
+          executor: 'self',
+          chainId: 0,
         })
 
         const valid = await verifyAuthorization({
