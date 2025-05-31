@@ -1,13 +1,20 @@
 import EtherIcon from '@/assets/icons/ethereum.png'
 // import NotificationIcon from '@/assets/icons/notification.png'
 import TokenIcon from '@/assets/icons/token.png'
+import { FaSkull } from 'react-icons/fa6'
 import { GiMagicBroom } from 'react-icons/gi'
 
 export const EXAMPLE_ITEMS = [
   {
-    title: 'Sweep with 7702',
+    title: 'Sweep tokens',
     description: 'Do it',
     image: <GiMagicBroom className='w-20 h-20 text-yellow-200' />,
+    url: '/examples/sweep',
+  },
+  {
+    title: 'Try 7702',
+    description: 'Check',
+    image: <FaSkull className='w-20 h-20 text-white' />,
     url: '/examples/batchsend-7702',
   },
   {
