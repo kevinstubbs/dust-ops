@@ -152,6 +152,7 @@ export default function Home() {
         .then(console.log)
         .catch(console.error)
     }
+  }
   }, [isConnected, currentStep, address])
 
   const proceedToReview = () => {
