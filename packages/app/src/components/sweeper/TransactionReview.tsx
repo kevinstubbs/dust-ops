@@ -1,5 +1,5 @@
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
-import type { Token } from '@/app/examples/web3-sweeper/page'
+import type { Token } from '@/app/page'
 
 interface TransactionReviewProps {
   selectedTokens: number[]
@@ -10,7 +10,7 @@ interface TransactionReviewProps {
 
 export function TransactionReview({ 
   selectedTokens, 
-  tokens, 
+  tokens, // eslint-disable-line @typescript-eslint/no-unused-vars
   totalValue, 
   onStartSweep 
 }: TransactionReviewProps) {

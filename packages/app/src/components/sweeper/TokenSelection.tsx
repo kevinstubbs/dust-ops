@@ -1,5 +1,5 @@
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import type { Token } from '@/app/examples/web3-sweeper/page'
+import type { Token } from '@/app/page'
 
 interface TokenSelectionProps {
   tokens: Token[]

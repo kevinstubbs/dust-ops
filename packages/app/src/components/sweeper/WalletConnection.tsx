@@ -1,11 +1,7 @@
 import { WalletIcon } from '@heroicons/react/24/outline'
 import { Connect } from '@/components/Connect'
 
-interface WalletConnectionProps {
-  onConnect: () => void
-}
-
-export function WalletConnection({ onConnect }: WalletConnectionProps) {
+export function WalletConnection() {
   return (
     <div className="text-center py-20">
       <div className="w-24 h-24 bg-gradient-to-r from-purple-500 to-blue-500 rounded-full flex items-center justify-center mx-auto mb-8">

@@ -11,6 +11,8 @@ import { SweepCompletion } from '@/components/sweeper/SweepCompletion'
 import { ProgressBar } from '@/components/sweeper/ProgressBar'
 import { SweeperHeader } from '@/components/sweeper/SweeperHeader'
 import { getTokenHoldings } from './actions/getHoldingsAction'
+import { fetchTokensFromAPIs, type FetchedToken } from '@/utils/tokenFetcher'
+import { getMultipleTokenPrices, type TokenPriceInfo } from '@/utils/simplePricing'
 
 export type Token = {
   id: number
@@ -25,75 +27,60 @@ export type Token = {
 
 const steps = ['Connect Wallet', 'Scan Holdings', 'Select Tokens', 'Review & Sweep', 'Privacy Deposit', 'Completion']
 
-const mockTokens: Token[] = [
-  {
-    id: 1,
-    symbol: 'USDC',
-    name: 'USD Coin',
-    chain: 'Polygon',
-    balance: '1,247.50',
-    value: '$1,247.50',
-    liquid: true,
-    selected: true,
-  },
-  {
-    id: 2,
-    symbol: 'USDT',
-    name: 'Tether',
-    chain: 'BSC',
-    balance: '892.33',
-    value: '$892.33',
-    liquid: true,
-    selected: true,
-  },
-  {
-    id: 3,
-    symbol: 'DAI',
-    name: 'Dai Stablecoin',
-    chain: 'Arbitrum',
-    balance: '445.67',
-    value: '$445.67',
-    liquid: true,
-    selected: true,
-  },
-  {
-    id: 4,
-    symbol: 'WETH',
-    name: 'Wrapped Ether',
-    chain: 'Optimism',
-    balance: '0.75',
-    value: '$2,850.00',
-    liquid: true,
-    selected: true,
-  },
-  {
-    id: 5,
-    symbol: 'SHIB',
-    name: 'Shiba Inu',
-    chain: 'Ethereum',
-    balance: '50,000,000',
-    value: '$1,200.00',
-    liquid: false,
-    selected: false,
-  },
-  {
-    id: 6,
-    symbol: 'LINK',
-    name: 'Chainlink',
-    chain: 'Ethereum',
-    balance: '125.5',
-    value: '$1,880.75',
-    liquid: true,
-    selected: true,
-  },
-]
+// Convert fetched tokens to Token format with pricing
+function convertFetchedTokensToTokens(fetchedTokens: FetchedToken[], priceData?: TokenPriceInfo[]): Token[] {
+  return fetchedTokens.map((token, index) => {
+    // Calculate display balance with decimals
+    const rawBalance = parseFloat(token.balance) || 0
+    const decimals = parseInt(token.decimals) || 18
+    const displayBalance = rawBalance / Math.pow(10, decimals)
+    
+    // Find price for this token
+    const priceInfo = priceData?.find(p => 
+      p.contractAddress.toLowerCase() === token.contractAddress.toLowerCase() && 
+      p.chain.toLowerCase() === token.chain.toLowerCase()
+    )
+    
+    const priceUSD = priceInfo?.priceUSD || 0
+    const totalValue = displayBalance * priceUSD
+    
+    // Handle symbol and name for native vs ERC-20 tokens
+    let symbol: string
+    let name: string
+    
+    if (token.type === 'Native') {
+      symbol = 'ETH'
+      name = `Ether (${token.chain})`
+    } else {
+      // Create a better symbol from the token name for ERC-20 tokens
+      symbol = token.name 
+        ? token.name.split(' ').map(word => word.charAt(0)).join('').substring(0, 6).toUpperCase()
+        : 'UNKNOWN'
+      name = token.name || 'Unknown Token'
+    }
+    
+    return {
+      id: index + 1,
+      symbol: symbol,
+      name: name,
+      chain: token.chain,
+      balance: displayBalance.toLocaleString(undefined, { 
+        minimumFractionDigits: 0, 
+        maximumFractionDigits: 6 
+      }),
+      value: totalValue > 0 
+        ? `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+        : '$0.00',
+      liquid: displayBalance > 0, // Only consider tokens with balance as liquid
+      selected: displayBalance > 0 && totalValue > 0.01, // Only auto-select tokens with balance > $0.01
+    }
+  }).filter(token => parseFloat(token.balance.replace(/,/g, '')) > 0) // Filter out zero balance tokens
+}
 
 export default function Home() {
   const [currentStep, setCurrentStep] = useState(0)
-  // const [tokensLoading, setTokensLoading] = useState(false)
   const [selectedTokens, setSelectedTokens] = useState<number[]>([])
-  // const [sweepInProgress, setSweepInProgress] = useState(false)
-  const [tokens] = useState<Token[]>(mockTokens)
+  const [tokens, setTokens] = useState<Token[]>([])
 
   const { address, isConnected } = useAccount()
 
@@ -102,54 +89,71 @@ export default function Home() {
     setSelectedTokens(tokens.filter((t) => t.liquid && t.selected).map((t) => t.id))
   }, [tokens])
 
-  // Handle wallet connection
+  // Handle wallet connection and token fetching
   useEffect(() => {
-    if (isConnected && currentStep === 0) {
+    if (isConnected && currentStep === 0 && address) {
       setCurrentStep(1)
 
       console.log({ address })
-      if (!address) return
 
-      getTokenHoldings('0xD51deC1A693E497f01ec8D12054e1782127874bB')
-        .then(console.log)
-        .catch(console.error)
-        .finally(() => {
-          // setSweepInProgress(false)
+      // Fetch tokens from the APIs
+      fetchTokensFromAPIs(address)
+        .then(async (fetchedTokens) => {
+          console.log('Fetched tokens:', fetchedTokens)
+          
+          // Fetch prices for the tokens
+          const tokensForPricing = fetchedTokens.map(token => ({
+            contractAddress: token.contractAddress,
+            name: token.name,
+            chain: token.chain
+          }))
+          
+          console.log('Fetching prices for tokens:', tokensForPricing)
+          
+          try {
+            const priceData = await getMultipleTokenPrices(tokensForPricing)
+            console.log('Price data:', priceData)
+            
+            const convertedTokens = convertFetchedTokensToTokens(fetchedTokens, priceData)
+            setTokens(convertedTokens)
+            console.log('Converted tokens with prices:', convertedTokens)
+          } catch (priceError) {
+            console.error('Error fetching prices:', priceError)
+            // Fallback to tokens without pricing
+            const convertedTokens = convertFetchedTokensToTokens(fetchedTokens)
+            setTokens(convertedTokens)
+            console.log('Converted tokens without prices:', convertedTokens)
+          }
+          
+          // Move to token selection after a brief delay to show scanning
+          setTimeout(() => {
+            setCurrentStep(2)
+          }, 3000)
+        })
+        .catch((error) => {
+          console.error('Error fetching tokens:', error)
+          // On error, proceed to next step anyway
+          setTimeout(() => {
+            setCurrentStep(2)
+          }, 2000)
         })
 
-      // setTokensLoading(true)
-      // setTimeout(() => {
-      //   // setTokensLoading(false)
-      //   setCurrentStep(2)
-      // }, 2000)
+      // Keep the original getTokenHoldings call for reference
+      getTokenHoldings(address)
+        .then(console.log)
+        .catch(console.error)
     }
-  }, [isConnected, currentStep])
-
-  const connectWallet = () => {
-    // This will be handled by the Connect component
-    setCurrentStep(1)
-
-    // setTokensLoading(true)
-    // setTimeout(() => {
-    //   // setTokensLoading(false)
-    //   setCurrentStep(2)
-    // }, 2000)
-  }
+  }, [isConnected, currentStep, address])
 
   const proceedToReview = () => {
     setCurrentStep(3)
   }
 
   const startSweep = () => {
-    // setSweepInProgress(true)
     setCurrentStep(4)
-
-    // const holdings = await getHoldingsAction(address)
-    // console.log('Token holdings:', holdings)
 
     // setTimeout(() => {
     //   setCurrentStep(5)
-    //   setSweepInProgress(false)
     // }, 5000)
   }
 
@@ -172,7 +176,7 @@ export default function Home() {
       {isConnected && <ProgressBar steps={steps} currentStep={currentStep} />}
 
       <div className='max-w-6xl mx-auto px-6 pb-12'>
-        {currentStep === 0 && <WalletConnection onConnect={connectWallet} />}
+        {currentStep === 0 && <WalletConnection />}
 
         {currentStep === 1 && <TokenScanning />}
 
