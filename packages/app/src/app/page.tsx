@@ -13,6 +13,8 @@ import { SweeperHeader } from '@/components/sweeper/SweeperHeader'
 import { getTokenHoldings } from './actions/getHoldingsAction'
 import { fetchTokensFromAPIs, type FetchedToken } from '@/utils/tokenFetcher'
 import { getMultipleTokenPrices, type TokenPriceInfo } from '@/utils/simplePricing'
+import { getQuoteAction } from './actions/getQuoteAction'
+import { CurrentConfig } from './actions/config'
 
 export type Token = {
   id: number
@@ -92,6 +94,13 @@ export default function Home() {
   // Handle wallet connection and token fetching
   useEffect(() => {
     if (isConnected && currentStep === 0 && address) {
+
+    // getQuoteAction(CurrentConfig.tokens.amountIn, CurrentConfig.tokens.in.decimals, CurrentConfig.tokens.out.decimals)
+    //   .then(console.log)
+    //   .catch(console.error)
+    //   .finally(() => console.log('Finished quoting'))
+
+    if (isConnected && currentStep === 0) {
       setCurrentStep(1)
 
       console.log({ address })

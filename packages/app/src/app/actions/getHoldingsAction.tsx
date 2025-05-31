@@ -77,7 +77,6 @@ async function getSpotPrices(chainId: number, currency = 'USD') {
 
   const cacheKey = `${chainId}_${currency}x`
   const cachedResult = await client.get(cacheKey)
-
   if (cachedResult) return JSON.parse(cachedResult)
 
   const url = `https://api.1inch.dev/price/v1.1/${chainId}`
