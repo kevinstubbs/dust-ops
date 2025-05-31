@@ -8,10 +8,12 @@ import {
   useWalletClient,
 } from 'wagmi'
 import { useState, useEffect } from 'react'
-import { parseEther } from 'viem'
+import { createWalletClient, encodeFunctionData, http, parseEther } from 'viem'
 import { useNotifications } from '@/context/Notifications'
 import { formatBalance } from '@/utils/format'
-import { signAuthorization } from 'viem/actions'
+import { signAuthorization, waitForTransactionReceipt } from 'viem/actions'
+import { privateKeyToAccount } from 'viem/accounts'
+import { foundry, sepolia } from 'viem/chains'
 
 const batchCallDelegationAbi = [
   {
@@ -47,6 +49,23 @@ const receivers = [
   '0xa0Ee7A142d267C1f36714E4a8F75612F20a79720',
 ] as const
 
+export const abi = [
+  { type: 'function', name: 'initialize', inputs: [], outputs: [], stateMutability: 'payable' },
+  {
+    type: 'function',
+    name: 'ping',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256', internalType: 'uint256' }],
+    stateMutability: 'nonpayable',
+  },
+  {
+    type: 'event',
+    name: 'Log',
+    inputs: [{ name: 'message', type: 'string', indexed: false, internalType: 'string' }],
+    anonymous: false,
+  },
+]
+
 type Call = {
   data: `0x${string}`
   to: `0x${string}`
@@ -76,7 +95,7 @@ export default function Batchsend7702() {
     value: parseEther(amount) * BigInt(receivers.length),
   })
 
-  const { data, writeContract } = useWriteContract()
+  const { data } = useWriteContract()
 
   const {
     isLoading,
@@ -85,6 +104,42 @@ export default function Batchsend7702() {
   } = useWaitForTransactionReceipt({
     hash: data,
   })
+
+  useEffect(() => {
+    ;(async function () {
+      try {
+        const eoa = privateKeyToAccount('0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80')
+
+        const walletClient = createWalletClient({
+          account: eoa,
+          chain: foundry,
+          transport: http(),
+        })
+        // 1. Authorize designation of the Contract onto the EOA.
+        const authorization = await walletClient.signAuthorization({
+          account: eoa,
+          contractAddress: '0xec8eEef80bda591e5f909c39C743EC437B8D9e17',
+        })
+
+        console.log({ authorization })
+        // 2. Designate the Contract on the EOA, and invoke the
+        //    `initialize` function.
+        const hash = await walletClient.sendTransaction({
+          authorizationList: [authorization],
+          //                  ↑ 3. Pass the Authorization as a parameter.
+          data: encodeFunctionData({
+            abi,
+            functionName: 'initialize',
+          }),
+          to: eoa.address,
+        })
+
+        console.log({ hash })
+      } catch (e) {
+        console.error(e)
+      }
+    })()
+  }, [])
 
   const handleSendTransaction = async () => {
     if (estimateError) {
@@ -103,59 +158,134 @@ export default function Batchsend7702() {
         throw new Error('Not connected (no address)')
       }
 
-      // // Sign the EIP-712 typed data for authorization
+      const brainAddress = '0xDcbd0d0A904eAad4e2935745faD7c27eBD9BC862' as any
+
+      // Sign the EIP-712 typed data for authorization
+      const domain = {
+        name: 'EIP-7702',
+        version: '1',
+        chainId: chain?.id,
+        verifyingContract: brainAddress,
+      }
+
+      // 3. Define the types (strict EIP-712 format)
+      const types = {
+        Authorization: [],
+      }
+
+      // 4. Define the message
+      const message = {}
+
+      // 5. Sign typed data using eth_signTypedData_v4 via viem
+      const signature = await walletClient.signTypedData({
+        account: address,
+        domain,
+        types,
+        primaryType: 'Authorization',
+        message,
+      })
+
       // const domain = {
-      //   name: 'EIP-7702',
+      //   name: 'MySmartAccount',
       //   version: '1',
-      //   chainId: chain?.id,
-      //   verifyingContract: address,
+      //   chainId: 0,
+      //   verifyingContract: '0x56BBC4969818d4E27Fe39983f8aDee4F3e1C5c6f',
       // }
 
       // const types = {
-      //   EIP712Domain: [
-      //     { name: 'name', type: 'string' },
-      //     { name: 'version', type: 'string' },
-      //     { name: 'chainId', type: 'uint256' },
-      //     { name: 'verifyingContract', type: 'address' },
-      //   ],
       //   Authorization: [
-      //     { name: 'authorizer', type: 'address' },
-      //     { name: 'authorized', type: 'address' },
       //     { name: 'nonce', type: 'uint256' },
+      //     { name: 'target', type: 'address' },
+      //     { name: 'data', type: 'bytes' },
+      //     { name: 'value', type: 'uint256' },
       //   ],
       // }
 
       // const message = {
-      //   authorizer: address,
-      //   authorized: address,
-      //   nonce: 0,
+      //   nonce: 1,
+      //   target: '0x56BBC4969818d4E27Fe39983f8aDee4F3e1C5c6f',
+      //   data: encodeFunctionData({
+      //     abi,
+      //     functionName: 'ping',
+      //   }),
+      //   value: 0,
       // }
 
-      // const authorization = await (window.ethereum as any).request({
-      //   method: 'eth_signTypedData_v4',
-      //   params: [address, { domain, types, primaryType: 'Authorization', message }],
+      // const params = [
+      //   address,
+      //   JSON.stringify({
+      //     types: types,
+      //     domain: domain,
+      //     primaryType: 'Authorization',
+      //     message: message,
+      //   }),
+      // ]
+
+      // console.log({ message, params })
+
+      // const method = 'eth_signTypedData_v4'
+
+      // const authorization = await (window as any).ethereum.request({
+      //   method,
+      //   params,
       // })
 
+      // console.log({ authorization })
+
       // Deployed with `make simple-deploy contract=BatchCallDelegation`
-      const contractAddress = '0x56BBC4969818d4E27Fe39983f8aDee4F3e1C5c6f'
+      // const contractAddress = '0x56BBC4969818d4E27Fe39983f8aDee4F3e1C5c6f'
 
-      console.log('wc account', walletClient.account)
-      const authorization = await signAuthorization(walletClient, {
-        account: address,
-        contractAddress: contractAddress,
-        executor: 'self',
-      })
+      // console.log('wc account', walletClient.account)
+      // const authorization = await signAuthorization(walletClient, {
+      //   account: address,
+      //   contractAddress: contractAddress,
+      //   executor: 'self',
+      // })
 
-      console.log({ authorization })
+      console.log({ signature })
       // Execute the batch send
-      writeContract({
-        address: address!,
-        abi: batchCallDelegationAbi,
-        functionName: 'execute',
-        args: [calls],
-        value: parseEther(amount) * BigInt(receivers.length),
-        authorizationList: [authorization],
+      // writeContract({
+      //   address: address!,
+      //   abi: batchCallDelegationAbi,
+      //   functionName: 'execute',
+      //   args: [calls],
+      //   value: parseEther(amount) * BigInt(receivers.length),
+      //   authorizationList: [authorization],
+      // })
+
+      const hash = await walletClient.sendTransaction({
+        authorizationList: [
+          {
+            address,
+            chainId: 31337,
+            nonce: 2,
+            signed: true,
+            // signature,
+            contractAddress: brainAddress,
+          },
+        ],
+        // ↑ 3. Pass the Authorization as a parameter.
+        data: encodeFunctionData({
+          abi,
+          functionName: 'ping',
+        }),
+        to: address,
       })
+
+      // const pingHash = await walletClient.sendTransaction({
+      //   data: encodeFunctionData({
+      //     abi,
+      //     functionName: 'ping',
+      //   }),
+      //   to: brainAddress,
+      // })
+      console.log({ hash })
+
+      const receipt = await waitForTransactionReceipt(walletClient, { hash })
+
+      console.log(receipt.logs)
+
+      // console.log({ pingHash })
     } catch (error) {
       console.error(error)
       Add(`Failed to send transaction: ${error}`, {
@@ -207,8 +337,7 @@ export default function Batchsend7702() {
         </div>
 
         <div className='mt-4'>
-          {address}
-          {walletClient?.transport.type}
+          <div>Address: {address}</div>
           <h2 className='text-lg mb-2'>Receivers ({receivers.length})</h2>
           <div className='max-h-60 overflow-y-auto'>
             {receivers.map((receiver, index) => (
@@ -222,7 +351,13 @@ export default function Batchsend7702() {
         <button
           className='btn btn-wide w-[100%] mt-4'
           onClick={handleSendTransaction}
-          disabled={!address || Boolean(estimateError) || amount === '' || isLoading}>
+          // disabled={
+          //   !address ||
+          //   // || Boolean(estimateError)
+          //   // amount === '' ||
+          //   // isLoading
+          // }
+        >
           {isLoading ? <span className='loading loading-dots loading-sm'></span> : 'Send ETH to all'}
         </button>
       </div>
