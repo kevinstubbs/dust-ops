@@ -33,9 +33,9 @@ We don’t just help you consolidate, swap, and bridge — we help you start fre
 ## How DUST.OPS Works
 
 1. You input a private key to connect the source wallet.
-2. DUST.OPS checks **Optimism**, **Base**, and **Unichain** for token balances.
+2. DUST.OPS checks **Optimism**, **Base**, and **Unichain** for token balances through utilising Blockscan's APIs.
 3. Liquidity analysis (via Coingecko API) determines what can be swapped.
-4. Tokens with enough liquidity are pre-selected for the swap.
+4. Tokens with enough liquidity in your wallet are pre-selected for the swap.
 5. You confirm swaps (to ETH) and optionally enable **privacy via Railgun**.
 6. ETH proceeds are sent to a **new wallet**.
 7. Now you have a **fresh wallet with funds**, completely detached from your original onchain identity.
