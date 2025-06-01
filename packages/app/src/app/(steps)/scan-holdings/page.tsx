@@ -55,43 +55,45 @@ export default function ScanHoldings() {
     if (!fullAccount) return
 
     fetchTokensFromAPIs(fullAccount.address, setNumChecked, setTotalNumChains)
-      .then(async (_rawTokens) => {
-        console.log('Fetched tokens:', _rawTokens)
-        const fetchedTokens: FetchedToken[] = []
+      .then(async (fetchedTokens) => {
+        console.log('Fetched tokens:', fetchedTokens)
 
-        for (let i = 0; i < _rawTokens.length; i++) {
-          const x = _rawTokens[i]
-          try {
-            const eoaClient = createWalletClient({
-              account: fullAccount,
-              chain: extractChain({
-                chains: [mainnet, optimism, base, unichain],
-                id: x.chainId as any, // Replace with your desired chain ID
-              }),
-              transport: http(CurrentConfig.rpc[x.chainId as any]),
-            })
-            console.log(CurrentConfig.rpc[x.chainId as any])
+        // TODO: Only show the tokens we can actually swap.
+        // const fetchedTokens: FetchedToken[] = []
 
-            const res = await getArbitraryQuote(
-              BigInt(parseFloat(x.balance) * 1e18),
-              x.contractAddress,
-              outTokens[x.chainId] || zeroAddress,
-              // zeroAddress,
-              x.chainId,
-              18,
-              18,
-              eoaClient as any
-            )
+        // for (let i = 0; i < _rawTokens.length; i++) {
+        //   const x = _rawTokens[i]
+        //   try {
+        //     const eoaClient = createWalletClient({
+        //       account: fullAccount,
+        //       chain: extractChain({
+        //         chains: [mainnet, optimism, base, unichain],
+        //         id: x.chainId as any, // Replace with your desired chain ID
+        //       }),
+        //       transport: http(CurrentConfig.rpc[x.chainId as any]),
+        //     })
+        //     console.log(CurrentConfig.rpc[x.chainId as any])
 
-            console.log({ res })
-            fetchedTokens.push(x as any)
-          } catch (e) {
-            if (x.chainId === 10) {
-              console.warn(e, x)
-            }
-            // console.warn(e)
-          }
-        }
+        //     const res = await getArbitraryQuote(
+        //       BigInt(parseFloat(x.balance) * 1e18),
+        //       x.contractAddress,
+        //       outTokens[x.chainId] || zeroAddress,
+        //       // zeroAddress,
+        //       x.chainId,
+        //       18,
+        //       18,
+        //       eoaClient as any
+        //     )
+
+        //     console.log({ res })
+        //     fetchedTokens.push(x as any)
+        //   } catch (e) {
+        //     if (x.chainId === 10) {
+        //       console.warn(e, x)
+        //     }
+        //     // console.warn(e)
+        //   }
+        // }
 
         // Fetch prices for the tokens
         const tokensForPricing = fetchedTokens.map((token) => ({
