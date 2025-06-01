@@ -1,7 +1,13 @@
-import { /*mainnet, arbitrum, base, polygon, optimism,*/ foundry } from '@reown/appkit/networks'
+import { /*mainnet, arbitrum, base, polygon, optimism,*/ base, optimism, unichain } from '@reown/appkit/networks'
 // import { sepolia } from '@reown/appkit/networks'
 
-export const ETH_CHAINS = [/*mainnet, arbitrum, base, polygon, optimism, sepolia,*/ foundry]
+export const ETH_CHAINS = [
+  base,
+  optimism,
+  unichain,
+  /*mainnet, arbitrum, base, polygon, optimism, sepolia,*/
+  //  foundry
+]
 
 export const NETWORK_COLORS = {
   ethereum: {

@@ -70,9 +70,18 @@ export async function fetchTokensFromAPIs(
       optimismBalanceResponse,
       unichainBalanceResponse,
     ] = await Promise.allSettled([
-      fetch(baseUrl, fetchOptions).then(() => setNumChecked(++numChecked)),
-      fetch(optimismUrl, fetchOptions).then(() => setNumChecked(++numChecked)),
-      fetch(unichainUrl, fetchOptions).then(() => setNumChecked(++numChecked)),
+      fetch(baseUrl, fetchOptions).then((x) => {
+        setNumChecked(++numChecked)
+        return x
+      }),
+      fetch(optimismUrl, fetchOptions).then((x) => {
+        setNumChecked(++numChecked)
+        return x
+      }),
+      fetch(unichainUrl, fetchOptions).then((x) => {
+        setNumChecked(++numChecked)
+        return x
+      }),
       fetch(baseBalanceUrl, fetchOptions),
       fetch(optimismBalanceUrl, fetchOptions),
       fetch(unichainBalanceUrl, fetchOptions),
@@ -81,7 +90,7 @@ export async function fetchTokensFromAPIs(
     const tokens: FetchedToken[] = []
 
     // Process Base response (ERC-20 tokens)
-    if (baseResponse?.status === 'fulfilled' && baseResponse.value.ok) {
+    if (baseResponse?.status === 'fulfilled' && baseResponse.value?.ok) {
       try {
         const baseData: ApiResponse = await baseResponse.value.json()
         console.log('Base response:', baseData)

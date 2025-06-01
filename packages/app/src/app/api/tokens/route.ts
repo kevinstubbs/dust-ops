@@ -62,7 +62,7 @@ export async function GET(request: NextRequest) {
     const tokens: FetchedToken[] = []
 
     // Process Base response (ERC-20 tokens)
-    if (baseResponse && baseResponse.status === 'fulfilled' && baseResponse.value.ok) {
+    if (baseResponse && baseResponse.status === 'fulfilled' && baseResponse.value?.ok) {
       try {
         const baseData: ApiResponse = await baseResponse.value.json()
         console.log('Server: Base response:', baseData)
