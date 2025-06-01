@@ -1,28 +1,26 @@
+'use client'
+
 import React from 'react'
-import { SITE_EMOJI, SITE_INFO /*SOCIAL_GITHUB, SOCIAL_TWITTER*/ } from '@/utils/site'
-// import { FaGithub, FaXTwitter } from 'react-icons/fa6'
+import { usePathname } from 'next/navigation'
 import { NetworkStatus } from './NetworkStatus'
-// import { LinkComponent } from './LinkComponent'
 
 export function Footer() {
+  const pathname = usePathname()
+  const isFirstScreen = pathname === '/'
+
   return (
     <>
       <div className='place-self-end'>
         <NetworkStatus />
       </div>
 
-      <footer className='sticky top-[100vh] footer flex justify-between items-center bg-neutral text-neutral-content p-4'>
-        <p>
-          {SITE_EMOJI} {SITE_INFO}
+      <footer className='sticky top-[100vh] footer flex justify-center items-center bg-transparent text-white p-4'>
+        <p className='font-tanklager text-center'>
+          {isFirstScreen 
+            ? 'Built with <3 at ETHGlobal Prague 2025 - One Click. No Echo.'
+            : '/DUST.OPS'
+          }
         </p>
-        <div className='flex gap-4'>
-          {/* <LinkComponent href={`https://github.com/${SOCIAL_GITHUB}`}>
-            <FaGithub />
-          </LinkComponent>
-          <LinkComponent href={`https://twitter.com/${SOCIAL_TWITTER}`}>
-            <FaXTwitter />
-          </LinkComponent> */}
-        </div>
       </footer>
     </>
   )
