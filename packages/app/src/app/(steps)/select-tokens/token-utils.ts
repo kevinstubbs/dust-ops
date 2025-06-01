@@ -43,6 +43,9 @@ export function convertFetchedTokensToTokens(fetchedTokens: FetchedToken[], pric
 
       return {
         token: {
+          ...token,
+          chainId: token.chainId,
+          address: token.contractAddress,
           id: index + 1,
           symbol: symbol,
           name: name,

@@ -1,5 +1,5 @@
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { Token } from '@/atoms/walletAtoms'
 
 interface TransactionReviewProps {
@@ -9,15 +9,15 @@ interface TransactionReviewProps {
   onStartSweep: (railgunAddress?: string) => void
 }
 
-export function TransactionReview({
-  selectedTokens,
-  tokens, // eslint-disable-line @typescript-eslint/no-unused-vars
-  totalValue,
-  onStartSweep,
-}: TransactionReviewProps) {
+export function TransactionReview({ selectedTokens, totalValue, onStartSweep }: TransactionReviewProps) {
   const [isToggled, setIsToggled] = useState(false)
   const [railgunAddress, setRailgunAddress] = useState('')
   const [newWalletAddress, setNewWalletAddress] = useState('')
+
+  useEffect(() => {
+    // TODO: Calculate the swaps here.
+    console.log({ selectedTokens })
+  }, [selectedTokens])
 
   const handleToggle = () => {
     const newValue = !isToggled

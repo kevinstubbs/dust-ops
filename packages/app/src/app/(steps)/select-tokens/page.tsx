@@ -2,7 +2,7 @@
 import { TokenSelection } from '@/components/sweeper/TokenSelection'
 import { useEffect } from 'react'
 import { useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { selectedTokensAtom, stepAtom, tokensAtom } from '@/atoms/walletAtoms'
+import { selectedTokensAtom, stepAtom, tokensAtom, totalValueAtom } from '@/atoms/walletAtoms'
 import { useRouter } from 'next/navigation'
 import { usePrivateAccount } from '@/app/hooks/usePrivateAccount'
 
@@ -39,6 +39,12 @@ export default function SelectTokens() {
     const token = tokens.find(({ id }) => id === t.id)
     return sum + parseFloat(token?.value.replace('$', '').replace(',', '') || '0')
   }, 0)
+
+  const setTotalValue = useSetAtom(totalValueAtom)
+
+  useEffect(() => {
+    setTotalValue(totalValue)
+  }, [totalValue])
 
   useEffect(() => {
     if (!account && typeof window !== 'undefined') {
