@@ -18,6 +18,14 @@ export default function SelectTokens() {
   const tokens = useAtomValue(tokensAtom)
   const [selectedTokens, setSelectedTokens] = useAtom(selectedTokensAtom)
 
+  // Auto-select tokens that are marked as selected (value > $0.01)
+  useEffect(() => {
+    const preselectedTokens = tokens.filter(token => token.selected)
+    if (preselectedTokens.length > 0 && selectedTokens.length === 0) {
+      setSelectedTokens(preselectedTokens)
+    }
+  }, [tokens, selectedTokens.length, setSelectedTokens])
+
   const toggleTokenSelection = (tokenId: number) => {
     const token = tokens.find((t) => t.id === tokenId)
     if (token?.liquid) {

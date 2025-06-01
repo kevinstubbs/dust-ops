@@ -1,2 +1,230 @@
 @import 'tailwindcss';
 @plugin "daisyui";
+
+/* Import MATAO Font */
+@font-face {
+  font-family: 'MATAO';
+  src: url('/fonts/MATAO%20Free%20Demo%20.otf') format('opentype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* CSS Variables */
+:root {
+  --color-dark-bg-primary: #161515;
+  --color-dark-bg-secondary: #1a1a1a;
+  --color-dark-bg-tertiary: #1f1f1f;
+}
+
+/* Global background color enforcement */
+html,
+body,
+#__next,
+[data-theme],
+.app {
+  background-color: #161515 !important;
+  color: white;
+  min-height: 100vh;
+}
+
+/* Ensure all major containers maintain background */
+main,
+.main,
+div[role="main"],
+section,
+article {
+  background-color: inherit;
+}
+
+/* Full Width Background Image for First Screen */
+body.first-screen-bg {
+  background-image: url('/images/background.png');
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+}
+
+/* Responsive background adjustments */
+@media (max-width: 768px) {
+  body.first-screen-bg {
+    background-attachment: scroll;
+    background-size: 100% auto;
+    background-position: top center;
+  }
+}
+
+/* Fallback for very tall screens */
+@media (min-aspect-ratio: 16/9) {
+  body.first-screen-bg {
+    background-size: cover;
+    background-position: center;
+  }
+}
+
+/* Glassmorphic Input Field */
+.input.validator {
+  background: rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 12px !important;
+  color: white !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1) !important;
+}
+
+.input.validator:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2) !important;
+}
+
+.input.validator:focus,
+.input.validator:focus-within {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  outline: none !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.1) !important;
+}
+
+.input.validator input {
+  background: transparent !important;
+  color: white !important;
+  border: none !important;
+  outline: none !important;
+}
+
+.input.validator input::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.input.validator svg {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Override any conflicting input styles */
+.input.validator:valid,
+.input.validator:invalid {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+}
+
+.input.validator:focus:valid,
+.input.validator:focus:invalid {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Custom Start Scanning Button */
+.btn-start-scanning {
+  background: #000000 !important;
+  border: none !important;
+  padding: 0.75rem 1.5rem !important;
+  border-radius: 0.75rem !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.btn-start-scanning .gradient-text {
+  font-family: 'MATAO', Arial, sans-serif !important;
+  font-weight: normal !important;
+  font-size: 1rem !important;
+  background: linear-gradient(90deg, #6E3F8E 0%, #9B2339 24%, #BCB74B 49%, #BCB74B 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: inline-block;
+}
+
+.btn-start-scanning:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+.btn-start-scanning:hover:not(:disabled) {
+  transform: scale(1.02);
+}
+
+.btn-start-scanning.hidden {
+  display: none !important;
+}
+
+/* Override any DaisyUI button styles */
+.btn-start-scanning:focus,
+.btn-start-scanning:active,
+.btn-start-scanning.btn {
+  background: #000000 !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Professional Header Styles */
+.header-professional {
+  background-color: #161515;
+  height: 90px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 50;
+}
+
+.header-professional .logo {
+  width: 40px;
+  height: 20px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.header-professional .logo:hover {
+  opacity: 0.8;
+}
+
+.btn-disconnect {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 6px;
+  color: white;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-disconnect:hover {
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.text-subheader {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+}
+
+/* Dark Theme Background Utilities */
+.bg-dark-primary {
+  background-color: var(--color-dark-bg-primary);
+}
+
+.bg-dark-secondary {
+  background-color: var(--color-dark-bg-secondary);
+}
+
+.bg-dark-tertiary {
+  background-color: var(--color-dark-bg-tertiary);
+}
+
+/* Override any potential conflicting styles */
+* {
+  box-sizing: border-box;
+}
+
+/* Ensure body fills viewport */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}

@@ -4,7 +4,7 @@ import { FetchedToken } from '@/utils/tokenFetcher'
 
 // Convert fetched tokens to Token format with pricing
 export function convertFetchedTokensToTokens(fetchedTokens: FetchedToken[], priceData?: TokenPriceInfo[]): Token[] {
-  return fetchedTokens
+  const tokens = fetchedTokens
     .map((token, index) => {
       // Calculate display balance with decimals
       const rawBalance = parseFloat(token.balance) || 0
@@ -42,24 +42,35 @@ export function convertFetchedTokensToTokens(fetchedTokens: FetchedToken[], pric
       }
 
       return {
-        ...token,
-        id: index + 1,
-        symbol: symbol,
-        name: name,
-        chain: token.chain,
-        chainId: token.chainId,
-        address: token.contractAddress,
-        balance: displayBalance.toLocaleString(undefined, {
-          minimumFractionDigits: 0,
-          maximumFractionDigits: 6,
-        }),
-        value:
-          totalValue > 0
-            ? `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
-            : '$0.00',
-        liquid: displayBalance > 0, // Only consider tokens with balance as liquid
-        selected: displayBalance > 0 && totalValue > 0.01, // Only auto-select tokens with balance > $0.01
+        token: {
+          ...token,
+          chainId: token.chainId,
+          address: token.contractAddress,
+          id: index + 1,
+          symbol: symbol,
+          name: name,
+          chain: token.chain,
+          balance: displayBalance.toLocaleString(undefined, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 6,
+          }),
+          value:
+            totalValue > 0
+              ? `$${totalValue.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+              : '$0.00',
+          liquid: displayBalance > 0, // Only consider tokens with balance as liquid
+          selected: displayBalance > 0 && totalValue > 0.01, // Only auto-select tokens with balance > $0.01
+        },
+        totalValue: totalValue, // Keep totalValue for sorting
       }
     })
-    .filter((token) => parseFloat(token.balance.replace(/,/g, '')) > 0) // Filter out zero balance tokens
+    .filter((item) => parseFloat(item.token.balance.replace(/,/g, '')) > 0) // Filter out zero balance tokens
+
+  // Sort tokens by highest value first
+  return tokens
+    .sort((a, b) => b.totalValue - a.totalValue)
+    .map((item, index) => ({
+      ...item.token,
+      id: index + 1, // Reassign IDs after sorting
+    }))
 }
