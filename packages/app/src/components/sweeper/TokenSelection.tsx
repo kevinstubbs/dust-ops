@@ -1,9 +1,9 @@
 import { ChevronRightIcon } from '@heroicons/react/24/outline'
-import type { Token } from '@/app/page'
+import type { Token } from '@/atoms/walletAtoms'
 
 interface TokenSelectionProps {
   tokens: Token[]
-  selectedTokens: number[]
+  selectedTokens: Token[]
   totalValue: number
   onToggleToken: (tokenId: number) => void
   onProceed: () => void
@@ -26,7 +26,7 @@ export function TokenSelection({ tokens, selectedTokens, totalValue, onToggleTok
             key={token.id}
             onClick={() => onToggleToken(token.id)}
             className={`p-4 rounded-xl border-2 transition-all cursor-pointer ${
-              selectedTokens.includes(token.id)
+              selectedTokens.find((x) => x.id === token.id)
                 ? 'border-purple-500 bg-purple-500/10'
                 : token.liquid
                   ? 'border-slate-600 bg-slate-800/50 hover:border-slate-500'
@@ -36,7 +36,7 @@ export function TokenSelection({ tokens, selectedTokens, totalValue, onToggleTok
               <div className='flex items-center space-x-4'>
                 <div
                   className={`w-3 h-3 rounded-full ${
-                    selectedTokens.includes(token.id) ? 'bg-purple-500' : 'bg-slate-600'
+                    selectedTokens.find((x) => x.id === token.id) ? 'bg-purple-500' : 'bg-slate-600'
                   }`}></div>
                 <div>
                   <div className='flex items-center space-x-2'>

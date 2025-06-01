@@ -23,15 +23,21 @@ export type FetchedToken = {
   contractAddress: string
 }
 
-export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken[]> {
+export async function fetchTokensFromAPIs(
+  address: string,
+  setNumChecked: (x: number) => void,
+  setTotalNumChains: (x: number) => void
+): Promise<FetchedToken[]> {
   const baseUrl = `https://base.blockscout.com/api?module=account&action=tokenlist&address=${address}`
   const optimismUrl = `https://optimism.blockscout.com/api?module=account&action=tokenlist&address=${address}`
   const unichainUrl = `https://unichain.blockscout.com/api?module=account&action=tokenlist&address=${address}`
-  
+
   // Native token balance URLs
   const baseBalanceUrl = `https://base.blockscout.com/api?module=account&action=balance&address=${address}`
   const optimismBalanceUrl = `https://optimism.blockscout.com/api?module=account&action=balance&address=${address}`
   const unichainBalanceUrl = `https://unichain.blockscout.com/api?module=account&action=balance&address=${address}`
+
+  setTotalNumChains(3)
 
   console.log('Fetching tokens for address:', address)
   console.log('Base URL:', baseUrl)
@@ -46,28 +52,30 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
     method: 'GET',
     mode: 'cors',
     headers: {
-      'Accept': 'application/json',
+      Accept: 'application/json',
       'Content-Type': 'application/json',
-      'Origin': window.location.origin,
+      Origin: window.location.origin,
     },
-    credentials: 'omit'
+    credentials: 'omit',
   }
+
+  let numChecked = 0
 
   try {
     const [
-      baseResponse, 
-      optimismResponse, 
+      baseResponse,
+      optimismResponse,
       unichainResponse,
       baseBalanceResponse,
       optimismBalanceResponse,
-      unichainBalanceResponse
+      unichainBalanceResponse,
     ] = await Promise.allSettled([
-      fetch(baseUrl, fetchOptions),
-      fetch(optimismUrl, fetchOptions),
-      fetch(unichainUrl, fetchOptions),
+      fetch(baseUrl, fetchOptions).then(() => setNumChecked(++numChecked)),
+      fetch(optimismUrl, fetchOptions).then(() => setNumChecked(++numChecked)),
+      fetch(unichainUrl, fetchOptions).then(() => setNumChecked(++numChecked)),
       fetch(baseBalanceUrl, fetchOptions),
       fetch(optimismBalanceUrl, fetchOptions),
-      fetch(unichainBalanceUrl, fetchOptions)
+      fetch(unichainBalanceUrl, fetchOptions),
     ])
 
     const tokens: FetchedToken[] = []
@@ -77,17 +85,17 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
       try {
         const baseData: ApiResponse = await baseResponse.value.json()
         console.log('Base response:', baseData)
-        
+
         if (baseData.status === '1' && baseData.result && Array.isArray(baseData.result)) {
           const baseTokens = baseData.result
-            .filter(token => token.type === 'ERC-20')
-            .map(token => ({
+            .filter((token) => token.type === 'ERC-20')
+            .map((token) => ({
               name: token.name || 'Unknown Token',
               balance: token.balance,
               decimals: token.decimals,
               type: token.type,
               chain: 'Base',
-              contractAddress: token.contractAddress
+              contractAddress: token.contractAddress,
             }))
           tokens.push(...baseTokens)
           console.log('Found', baseTokens.length, 'ERC-20 tokens on Base')
@@ -111,7 +119,7 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
       try {
         const baseBalanceData = await baseBalanceResponse.value.json()
         console.log('Base balance response:', baseBalanceData)
-        
+
         if (baseBalanceData.status === '1' && baseBalanceData.result) {
           const balance = baseBalanceData.result
           if (balance !== '0') {
@@ -121,7 +129,7 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
               decimals: '18',
               type: 'Native',
               chain: 'Base',
-              contractAddress: '0x0000000000000000000000000000000000000000' // Native token placeholder
+              contractAddress: '0x0000000000000000000000000000000000000000', // Native token placeholder
             })
             console.log('Found native ETH balance on Base:', balance)
           }
@@ -136,17 +144,17 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
       try {
         const optimismData: ApiResponse = await optimismResponse.value.json()
         console.log('Optimism response:', optimismData)
-        
+
         if (optimismData.status === '1' && optimismData.result && Array.isArray(optimismData.result)) {
           const optimismTokens = optimismData.result
-            .filter(token => token.type === 'ERC-20')
-            .map(token => ({
+            .filter((token) => token.type === 'ERC-20')
+            .map((token) => ({
               name: token.name || 'Unknown Token',
               balance: token.balance,
               decimals: token.decimals,
               type: token.type,
               chain: 'Optimism',
-              contractAddress: token.contractAddress
+              contractAddress: token.contractAddress,
             }))
           tokens.push(...optimismTokens)
           console.log('Found', optimismTokens.length, 'ERC-20 tokens on Optimism')
@@ -170,7 +178,7 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
       try {
         const optimismBalanceData = await optimismBalanceResponse.value.json()
         console.log('Optimism balance response:', optimismBalanceData)
-        
+
         if (optimismBalanceData.status === '1' && optimismBalanceData.result) {
           const balance = optimismBalanceData.result
           if (balance !== '0') {
@@ -180,7 +188,7 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
               decimals: '18',
               type: 'Native',
               chain: 'Optimism',
-              contractAddress: '0x0000000000000000000000000000000000000000' // Native token placeholder
+              contractAddress: '0x0000000000000000000000000000000000000000', // Native token placeholder
             })
             console.log('Found native ETH balance on Optimism:', balance)
           }
@@ -195,17 +203,17 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
       try {
         const unichainData: ApiResponse = await unichainResponse.value.json()
         console.log('Unichain response:', unichainData)
-        
+
         if (unichainData.status === '1' && unichainData.result && Array.isArray(unichainData.result)) {
           const unichainTokens = unichainData.result
-            .filter(token => token.type === 'ERC-20')
-            .map(token => ({
+            .filter((token) => token.type === 'ERC-20')
+            .map((token) => ({
               name: token.name || 'Unknown Token',
               balance: token.balance,
               decimals: token.decimals,
               type: token.type,
               chain: 'Unichain',
-              contractAddress: token.contractAddress
+              contractAddress: token.contractAddress,
             }))
           tokens.push(...unichainTokens)
           console.log('Found', unichainTokens.length, 'ERC-20 tokens on Unichain')
@@ -229,7 +237,7 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
       try {
         const unichainBalanceData = await unichainBalanceResponse.value.json()
         console.log('Unichain balance response:', unichainBalanceData)
-        
+
         if (unichainBalanceData.status === '1' && unichainBalanceData.result) {
           const balance = unichainBalanceData.result
           if (balance !== '0') {
@@ -239,7 +247,7 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
               decimals: '18',
               type: 'Native',
               chain: 'Unichain',
-              contractAddress: '0x0000000000000000000000000000000000000000' // Native token placeholder
+              contractAddress: '0x0000000000000000000000000000000000000000', // Native token placeholder
             })
             console.log('Found native ETH balance on Unichain:', balance)
           }
@@ -250,13 +258,13 @@ export async function fetchTokensFromAPIs(address: string): Promise<FetchedToken
     }
 
     console.log('Total tokens found:', tokens.length)
-    
+
     // If no tokens found due to CORS errors, let's try the fallback server-side approach
     if (tokens.length === 0) {
       console.log('No tokens found via direct API calls. Trying server-side proxy...')
       return await fetchTokensViaProxy(address)
     }
-    
+
     return tokens
   } catch (error) {
     console.error('Error fetching tokens:', error)
@@ -277,4 +285,4 @@ async function fetchTokensViaProxy(address: string): Promise<FetchedToken[]> {
     console.error('Server-side proxy also failed:', error)
     return []
   }
-} 
+}

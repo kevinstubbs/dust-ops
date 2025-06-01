@@ -36,7 +36,7 @@ export async function GET(request: NextRequest) {
   const baseUrl = `https://base.blockscout.com/api?module=account&action=tokenlist&address=${address}`
   const optimismUrl = `https://optimism.blockscout.com/api?module=account&action=tokenlist&address=${address}`
   const unichainUrl = `https://unichain.blockscout.com/api?module=account&action=tokenlist&address=${address}`
-  
+
   // Native token balance URLs
   const baseBalanceUrl = `https://base.blockscout.com/api?module=account&action=balance&address=${address}`
   const optimismBalanceUrl = `https://optimism.blockscout.com/api?module=account&action=balance&address=${address}`
@@ -44,39 +44,39 @@ export async function GET(request: NextRequest) {
 
   try {
     const [
-      baseResponse, 
-      optimismResponse, 
+      baseResponse,
+      optimismResponse,
       unichainResponse,
       baseBalanceResponse,
       optimismBalanceResponse,
-      unichainBalanceResponse
+      unichainBalanceResponse,
     ] = await Promise.allSettled([
       fetch(baseUrl),
       fetch(optimismUrl),
       fetch(unichainUrl),
       fetch(baseBalanceUrl),
       fetch(optimismBalanceUrl),
-      fetch(unichainBalanceUrl)
+      fetch(unichainBalanceUrl),
     ])
 
     const tokens: FetchedToken[] = []
 
     // Process Base response (ERC-20 tokens)
-    if (baseResponse.status === 'fulfilled' && baseResponse.value.ok) {
+    if (baseResponse && baseResponse.status === 'fulfilled' && baseResponse.value.ok) {
       try {
         const baseData: ApiResponse = await baseResponse.value.json()
         console.log('Server: Base response:', baseData)
-        
+
         if (baseData.status === '1' && baseData.result && Array.isArray(baseData.result)) {
           const baseTokens = baseData.result
-            .filter(token => token.type === 'ERC-20')
-            .map(token => ({
+            .filter((token) => token.type === 'ERC-20')
+            .map((token) => ({
               name: token.name || 'Unknown Token',
               balance: token.balance,
               decimals: token.decimals,
               type: token.type,
               chain: 'Base',
-              contractAddress: token.contractAddress
+              contractAddress: token.contractAddress,
             }))
           tokens.push(...baseTokens)
           console.log('Server: Found', baseTokens.length, 'ERC-20 tokens on Base')
@@ -87,11 +87,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Process Base native token balance
-    if (baseBalanceResponse.status === 'fulfilled' && baseBalanceResponse.value.ok) {
+    if (baseBalanceResponse && baseBalanceResponse.status === 'fulfilled' && baseBalanceResponse.value.ok) {
       try {
         const baseBalanceData = await baseBalanceResponse.value.json()
         console.log('Server: Base balance response:', baseBalanceData)
-        
+
         if (baseBalanceData.status === '1' && baseBalanceData.result) {
           const balance = baseBalanceData.result
           if (balance !== '0') {
@@ -101,7 +101,7 @@ export async function GET(request: NextRequest) {
               decimals: '18',
               type: 'Native',
               chain: 'Base',
-              contractAddress: '0x0000000000000000000000000000000000000000'
+              contractAddress: '0x0000000000000000000000000000000000000000',
             })
             console.log('Server: Found native ETH balance on Base:', balance)
           }
@@ -112,21 +112,21 @@ export async function GET(request: NextRequest) {
     }
 
     // Process Optimism response (ERC-20 tokens)
-    if (optimismResponse.status === 'fulfilled' && optimismResponse.value.ok) {
+    if (optimismResponse && optimismResponse.status === 'fulfilled' && optimismResponse.value.ok) {
       try {
         const optimismData: ApiResponse = await optimismResponse.value.json()
         console.log('Server: Optimism response:', optimismData)
-        
+
         if (optimismData.status === '1' && optimismData.result && Array.isArray(optimismData.result)) {
           const optimismTokens = optimismData.result
-            .filter(token => token.type === 'ERC-20')
-            .map(token => ({
+            .filter((token) => token.type === 'ERC-20')
+            .map((token) => ({
               name: token.name || 'Unknown Token',
               balance: token.balance,
               decimals: token.decimals,
               type: token.type,
               chain: 'Optimism',
-              contractAddress: token.contractAddress
+              contractAddress: token.contractAddress,
             }))
           tokens.push(...optimismTokens)
           console.log('Server: Found', optimismTokens.length, 'ERC-20 tokens on Optimism')
@@ -137,11 +137,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Process Optimism native token balance
-    if (optimismBalanceResponse.status === 'fulfilled' && optimismBalanceResponse.value.ok) {
+    if (optimismBalanceResponse?.status === 'fulfilled' && optimismBalanceResponse.value.ok) {
       try {
         const optimismBalanceData = await optimismBalanceResponse.value.json()
         console.log('Server: Optimism balance response:', optimismBalanceData)
-        
+
         if (optimismBalanceData.status === '1' && optimismBalanceData.result) {
           const balance = optimismBalanceData.result
           if (balance !== '0') {
@@ -151,7 +151,7 @@ export async function GET(request: NextRequest) {
               decimals: '18',
               type: 'Native',
               chain: 'Optimism',
-              contractAddress: '0x0000000000000000000000000000000000000000'
+              contractAddress: '0x0000000000000000000000000000000000000000',
             })
             console.log('Server: Found native ETH balance on Optimism:', balance)
           }
@@ -162,21 +162,21 @@ export async function GET(request: NextRequest) {
     }
 
     // Process Unichain response (ERC-20 tokens)
-    if (unichainResponse.status === 'fulfilled' && unichainResponse.value.ok) {
+    if (unichainResponse?.status === 'fulfilled' && unichainResponse.value.ok) {
       try {
         const unichainData: ApiResponse = await unichainResponse.value.json()
         console.log('Server: Unichain response:', unichainData)
-        
+
         if (unichainData.status === '1' && unichainData.result && Array.isArray(unichainData.result)) {
           const unichainTokens = unichainData.result
-            .filter(token => token.type === 'ERC-20')
-            .map(token => ({
+            .filter((token) => token.type === 'ERC-20')
+            .map((token) => ({
               name: token.name || 'Unknown Token',
               balance: token.balance,
               decimals: token.decimals,
               type: token.type,
               chain: 'Unichain',
-              contractAddress: token.contractAddress
+              contractAddress: token.contractAddress,
             }))
           tokens.push(...unichainTokens)
           console.log('Server: Found', unichainTokens.length, 'ERC-20 tokens on Unichain')
@@ -187,11 +187,11 @@ export async function GET(request: NextRequest) {
     }
 
     // Process Unichain native token balance
-    if (unichainBalanceResponse.status === 'fulfilled' && unichainBalanceResponse.value.ok) {
+    if (unichainBalanceResponse?.status === 'fulfilled' && unichainBalanceResponse.value.ok) {
       try {
         const unichainBalanceData = await unichainBalanceResponse.value.json()
         console.log('Server: Unichain balance response:', unichainBalanceData)
-        
+
         if (unichainBalanceData.status === '1' && unichainBalanceData.result) {
           const balance = unichainBalanceData.result
           if (balance !== '0') {
@@ -201,7 +201,7 @@ export async function GET(request: NextRequest) {
               decimals: '18',
               type: 'Native',
               chain: 'Unichain',
-              contractAddress: '0x0000000000000000000000000000000000000000'
+              contractAddress: '0x0000000000000000000000000000000000000000',
             })
             console.log('Server: Found native ETH balance on Unichain:', balance)
           }
@@ -212,7 +212,7 @@ export async function GET(request: NextRequest) {
     }
 
     console.log('Server: Total tokens found:', tokens.length)
-    
+
     return NextResponse.json(tokens, {
       headers: {
         'Access-Control-Allow-Origin': '*',
@@ -235,4 +235,4 @@ export async function OPTIONS() {
       'Access-Control-Allow-Headers': 'Content-Type, Authorization',
     },
   })
-} 
+}
