@@ -3,7 +3,7 @@
 
 A **token sweeper** and **privacy enabler** for your fragmented, cluttered EVM wallets. Designed for surgical execution, **DUST.OPS** finds your liquid assets across chains, consolidates them, and optionally ghosts your exit through a Railgun-powered privacy hatch.
 
-[Demo Video]() | [Live App](https://dust-ops.vercel.app/) | [Slide Deck](https://github.com/kevinstubbs/dust-ops/blob/main/slide-deck.md)
+[Demo Video]() | [Live App](https://dust-ops.vercel.app/) | [Slide Deck](https://github.com/kevinstubbs/dust-ops/blob/main/slide-deck.md) | [Design Files](https://github.com/kevinstubbs/dust-ops/blob/main/design-files.md)
 
 ---
 
