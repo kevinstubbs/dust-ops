@@ -60,7 +60,7 @@ export async function POST(request: NextRequest) {
       {} as Record<string, Array<TokenRequest & { priceContractAddress: string }>>
     )
 
-    const allResults = []
+    const allResults: any[] = []
     const chainEntries = Object.entries(tokensByChain)
 
     const redisClient = process.env.REDIS_CONNSTR ? new Redis(process.env.REDIS_CONNSTR) : null

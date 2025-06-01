@@ -8,6 +8,7 @@ import {
   http,
 } from 'viem'
 import { base, mainnet, optimism, unichain } from 'viem/chains'
+import { CurrentConfig } from './config'
 // import { base, mainnet, optimism, unichain } from 'viem/chains'
 // import { FeeAmount } from '@uniswap/v4-sdk'
 // import QuoterAbi from '@uniswap/v4-periphery'
@@ -19,6 +20,13 @@ const UNIVERSAL_ROUTER_ADDRESS = {
   [unichain.id]: '0xef740bf23acae26f6492b10de645d6b98dc8eaf3',
   [base.id]: '0x6ff5693b99212da76ad316178a184ab56d299b43',
   [optimism.id]: '0x851116d9223fabed8e56c0e6b8ad0c31d98b3507',
+}
+
+export const outTokens = {
+  [mainnet.id]: '0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2',
+  [optimism.id]: '0x4200000000000000000000000000000000000006',
+  [base.id]: '0x4200000000000000000000000000000000000006',
+  [unichain.id]: '0x4200000000000000000000000000000000000006',
 }
 
 // Router ABI
@@ -201,7 +209,7 @@ export async function getArbitraryQuote(
       chains: [mainnet, optimism, base, unichain],
       id: chainId as any, // Replace with your desired chain ID
     }),
-    transport: http(), // or your custom RPC
+    transport: http(CurrentConfig.rpc[chainId as any]),
   })
 
   // console.log({ inToken, outToken })
@@ -225,7 +233,7 @@ export async function getArbitraryQuote(
     currency1: outToken as any,
     fee: 3000,
     tickSpacing: 60,
-    hooks: '0x0000000000000000000000000000000000000000',
+    hooks: '0x0000000000000000000000000000000000000000' as any,
   }
 
   // 2. Encode the Universal Router command
@@ -315,12 +323,33 @@ export async function getArbitraryQuote(
   const gasEstimate = await client.estimateContractGas({
     account: walletClient.address,
     address: UNIVERSAL_ROUTER_ADDRESS[chainId],
-    abi: ROUTER_ABI,
+    abi: [
+      {
+        inputs: [
+          { internalType: 'bytes', name: 'commands', type: 'bytes' },
+          { internalType: 'bytes[]', name: 'inputs', type: 'bytes[]' },
+          { internalType: 'uint256', name: 'deadline', type: 'uint256' },
+        ],
+        name: 'execute',
+        outputs: [],
+        stateMutability: 'payable',
+        type: 'function',
+      },
+    ],
     functionName: 'execute',
-    args: [commands, inputs],
+    args: [commands, inputs, BigInt(Date.now() + 360000)],
   })
 
-  return { commands, inputs, gasEstimate }
+  const encodedParameters = encodeAbiParameters(
+    [
+      { internalType: 'bytes', name: 'commands', type: 'bytes' },
+      { internalType: 'bytes[]', name: 'inputs', type: 'bytes[]' },
+      { internalType: 'uint256', name: 'deadline', type: 'uint256' },
+    ],
+    [commands, inputs, BigInt(0)]
+  )
+
+  return { commands, inputs, deadline: 0, encodedParameters, gasEstimate }
 }
 
 // export async function getQuoteAction(amountIn: number, decimals: number, outDecimals: number): Promise<string> {

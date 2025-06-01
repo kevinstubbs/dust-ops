@@ -10,7 +10,11 @@
     ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "resolveJsonModule": true
   },
   "ts-node": {
     "require": ["tsconfig-paths/register"]
