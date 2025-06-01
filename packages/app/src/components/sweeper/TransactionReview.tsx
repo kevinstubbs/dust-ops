@@ -86,7 +86,7 @@ export function TransactionReview({ selectedTokens, totalValue, gas, onStartSwee
               <div className='flex justify-between font-semibold'>
                 <span>Net Amount (ETH):</span>
                 {hasInsufficientFunds ? (
-                  <span style={{ color: '#ff4444' }}>NOT ENOUGH FUNDS TO PAY GASS FEES</span>
+                  <span style={{ color: '#ff4444' }}>NOT ENOUGH FUNDS TO PAY GAS FEES</span>
                 ) : (
                   <span style={{ color: '#BBB424' }}>~{netEthAmount.toFixed(4)} ETH</span>
                 )}
