@@ -16,10 +16,34 @@ export default function ScanHoldings() {
   const [tokens, setTokens] = useAtom(tokensAtom)
   const [numChecked, setNumChecked] = useState(0)
   const [totalNumChains, setTotalNumChains] = useState(0)
+  const [progress, setProgress] = useState(0)
   const setStep = useSetAtom(stepAtom)
 
   useEffect(() => {
     setStep(1)
+  }, [])
+
+  // Animate progress bar with variable speed
+  useEffect(() => {
+    const startTime = Date.now()
+    const duration = 4000 // 4 seconds total
+    
+    const animateProgress = () => {
+      const elapsed = Date.now() - startTime
+      const t = Math.min(elapsed / duration, 1) // normalized time (0 to 1)
+      
+      // Custom easing: slow start, fast finish
+      // Using exponential ease-in function
+      const easedProgress = Math.pow(t, 0.3) * 100
+      
+      setProgress(easedProgress)
+      
+      if (t < 1) {
+        requestAnimationFrame(animateProgress)
+      }
+    }
+    
+    requestAnimationFrame(animateProgress)
   }, [])
 
   useEffect(() => {
@@ -55,10 +79,10 @@ export default function ScanHoldings() {
           }
         }
 
-        // Move to token selection after a brief delay to show scanning
+        // Move to token selection after progress completes
         setTimeout(() => {
           router.push('/select-tokens')
-        }, 1000)
+        }, 4500) // Slightly longer than progress animation
       })
       .catch((error) => {
         console.error('Error fetching tokens:', error)
@@ -85,17 +109,20 @@ export default function ScanHoldings() {
 
   return (
     <div className='text-center py-20'>
-      <ArrowPathIcon className='w-16 h-16 mx-auto mb-6 animate-spin text-purple-400' />
-      <h2 className='text-3xl font-bold mb-4'>Scanning Your Holdings</h2>
-      <p className='text-slate-300 mb-8'>Analyzing tokens from Base, Optimism, and Unichain via Blockscout APIs...</p>
+      <ArrowPathIcon className='w-16 h-16 mx-auto mb-6 animate-spin spin-gradient' />
+      <h2 className='text-3xl font-bold mb-4 font-tanklager'>Scanning Your Holdings</h2>
+      <p className='text-slate-300 mb-8 font-tanklager'>Analyzing tokens from Base, Optimism, and Unichain via Blockscout APIs...</p>
       <div className='max-w-md mx-auto'>
-        <div className='bg-slate-700 rounded-full h-2 mb-4'>
-          <div className='bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full animate-pulse w-3/4'></div>
+        <div className='bg-slate-700 rounded-full h-3 mb-4 overflow-hidden'>
+          <div 
+            className='scan-progress-bar h-3 rounded-full transition-all duration-100 ease-out'
+            style={{ width: `${progress}%` }}
+          ></div>
         </div>
-        <p className='text-sm text-slate-400'>
+        <p className='text-sm text-slate-400 font-tanklager'>
           Checking {numChecked}/{totalNumChains} chains...
         </p>
-        <p className='text-sm text-slate-400'>Found {tokens.length} tokens.</p>
+        <p className='text-sm text-slate-400 font-tanklager'>Found {tokens.length} tokens.</p>
       </div>
     </div>
   )

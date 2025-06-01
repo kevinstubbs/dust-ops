@@ -6,7 +6,7 @@ interface TransactionReviewProps {
   selectedTokens: Token[]
   tokens: Token[]
   totalValue: number
-  onStartSweep: () => void
+  onStartSweep: (railgunAddress?: string) => void
 }
 
 export function TransactionReview({
@@ -16,12 +16,39 @@ export function TransactionReview({
   onStartSweep,
 }: TransactionReviewProps) {
   const [isToggled, setIsToggled] = useState(false)
+  const [railgunAddress, setRailgunAddress] = useState('')
+  const [newWalletAddress, setNewWalletAddress] = useState('')
 
   const handleToggle = () => {
     const newValue = !isToggled
     setIsToggled(newValue)
     return newValue
   }
+
+  // Calculate actual total value from selected tokens
+  const actualTotalValue = selectedTokens.reduce((sum, token) => {
+    const value = parseFloat(token.value.replace('$', '').replace(',', '') || '0')
+    return sum + value
+  }, 0)
+
+  // More realistic gas estimation based on transaction size
+  const baseGasFee = 8.50 // Base gas fee in USD
+  const additionalGasPerToken = selectedTokens.length * 2.50 // Additional gas per token
+  const estimatedGas = baseGasFee + additionalGasPerToken
+  
+  const slippagePercent = 0.5
+  const slippageAmount = actualTotalValue * (slippagePercent / 100)
+  
+  // Check if we have enough funds before applying Math.max
+  const calculatedNetAmount = actualTotalValue - estimatedGas - slippageAmount
+  const hasInsufficientFunds = calculatedNetAmount < 0
+  
+  // Ensure we don't have negative net amount
+  const netUsdAmount = Math.max(0, calculatedNetAmount)
+
+  // Convert to ETH (using approximate rate - in real app this would be dynamic)
+  const ethPrice = 3200 // Approximate ETH price in USD
+  const netEthAmount = netUsdAmount / ethPrice
 
   return (
     <div className='py-8'>
@@ -38,33 +65,37 @@ export function TransactionReview({
               </div>
               <div className='flex justify-between'>
                 <span className='text-slate-400'>Total Value:</span>
-                <span className='text-green-400 font-semibold'>${totalValue.toLocaleString()}</span>
+                <span className='font-semibold' style={{ color: '#BBB424' }}>${actualTotalValue.toLocaleString()}</span>
               </div>
               <div className='flex justify-between'>
                 <span className='text-slate-400'>Estimated Gas:</span>
-                <span>$45.20</span>
+                <span>${estimatedGas.toFixed(2)}</span>
               </div>
               <div className='flex justify-between'>
                 <span className='text-slate-400'>Slippage:</span>
-                <span>0.5%</span>
+                <span>{slippagePercent}%</span>
               </div>
               <hr className='border-slate-600' />
               <div className='flex justify-between font-semibold'>
                 <span>Net Amount (ETH):</span>
-                <span className='text-green-400'>~2.48 ETH</span>
+                {hasInsufficientFunds ? (
+                  <span style={{ color: '#ff4444' }}>NOT ENOUGH FUNDS TO PAY GASS FEES</span>
+                ) : (
+                  <span style={{ color: '#BBB424' }}>~{netEthAmount.toFixed(4)} ETH</span>
+                )}
               </div>
             </div>
           </div>
 
           <div className='bg-slate-800/50 rounded-xl p-6'>
             <h3 className='text-xl font-semibold mb-4 flex items-center'>
-              <ShieldCheckIcon className='w-5 h-5 mr-2 text-purple-400' />
+              <ShieldCheckIcon className='w-5 h-5 mr-2' style={{ color: '#BBB424' }} />
               Privacy Settings
             </h3>
             <div className='space-y-3'>
               <div className='flex justify-between'>
                 <span className='text-slate-400'>Railgun Deposit:</span>
-                <span className='text-green-400'>Enabled</span>
+                <span style={{ color: '#BBB424' }}>Enabled</span>
               </div>
               <div className='flex justify-between'>
                 <span className='text-slate-400'>Withdrawal Delay:</span>
@@ -74,15 +105,30 @@ export function TransactionReview({
                 <span className='text-slate-400'>Fresh Wallet:</span>
                 <span>Auto-generated</span>
               </div>
-              <button
-                onClick={handleToggle}
-                className='w-full mt-4 bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/30 px-6 py-3 rounded-xl font-semibold transition-all duration-300 text-white hover:bg-white/15 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] backdrop-saturate-150'>
-                <span className='flex items-center justify-center space-x-2'>
-                  <span
-                    className={`w-2 h-2 rounded-full transition-colors duration-300 ${isToggled ? 'bg-green-400' : 'bg-slate-400'}`}></span>
-                  <span>{isToggled ? 'Advanced Mode Enabled' : 'Enable Advanced Mode'}</span>
-                </span>
-              </button>
+              
+              {!isToggled ? (
+                <button
+                  onClick={handleToggle}
+                  className='w-full mt-4 bg-white/10 backdrop-blur-md border border-white/20 hover:border-white/30 px-6 py-3 rounded-xl font-semibold transition-all duration-300 text-white hover:bg-white/15 shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] backdrop-saturate-150'>
+                  <span className='flex items-center justify-center space-x-2'>
+                    <span className='w-2 h-2 rounded-full bg-slate-400'></span>
+                    <span>Enable Advanced Mode</span>
+                  </span>
+                </button>
+              ) : (
+                <div className='mt-4'>
+                  <label className='input validator w-full'>
+                    <input
+                      type='text'
+                      placeholder='RAILGUN 0ZK ADDRESS'
+                      value={railgunAddress}
+                      onChange={(e) => setRailgunAddress(e.target.value)}
+                      className='w-full'
+                      style={{ textTransform: 'uppercase' }}
+                    />
+                  </label>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -99,7 +145,9 @@ export function TransactionReview({
                 'Withdraw to fresh wallet',
               ].map((step, index) => (
                 <div key={index} className='flex items-center space-x-3'>
-                  <div className='w-6 h-6 rounded-full bg-slate-600 flex items-center justify-center text-xs'>
+                  <div 
+                    className='w-6 h-6 rounded-full flex items-center justify-center text-xs text-black font-semibold'
+                    style={{ backgroundColor: '#BBB424' }}>
                     {index + 1}
                   </div>
                   <span className='text-slate-300'>{step}</span>
@@ -108,11 +156,49 @@ export function TransactionReview({
             </div>
           </div>
 
-          <button
-            onClick={onStartSweep}
-            className='w-full bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 px-6 py-4 rounded-xl font-semibold transition-all text-lg'>
-            Confirm & Start Sweep
-          </button>
+          <div className='bg-slate-800/50 rounded-xl p-6'>
+            <h3 className='text-xl font-semibold mb-4'>Wallet Address</h3>
+            <div className='space-y-4'>
+              <div>
+                <label className='block text-sm font-medium mb-3 font-tanklager' style={{ color: '#BBB424' }}>
+                  ADD NEW WALLET ADDRESS HERE
+                </label>
+                <input
+                  type='text'
+                  placeholder='0x...'
+                  value={newWalletAddress}
+                  onChange={(e) => setNewWalletAddress(e.target.value)}
+                  className='w-full px-4 py-3 rounded-xl border font-mono text-sm transition-all duration-300'
+                  style={{
+                    background: 'rgba(255, 255, 255, 0.1)',
+                    backdropFilter: 'blur(10px)',
+                    WebkitBackdropFilter: 'blur(10px)',
+                    border: '1px solid rgba(255, 255, 255, 0.2)',
+                    color: 'white',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+                  }}
+                  onFocus={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.15)'
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.4)'
+                    e.target.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(255, 255, 255, 0.1)'
+                  }}
+                  onBlur={(e) => {
+                    e.target.style.background = 'rgba(255, 255, 255, 0.1)'
+                    e.target.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+                    e.target.style.boxShadow = '0 8px 32px rgba(0, 0, 0, 0.1)'
+                  }}
+                />
+              </div>
+
+              <button
+                onClick={() => onStartSweep(railgunAddress)}
+                disabled={(isToggled && !railgunAddress.trim()) || !newWalletAddress.trim()}
+                className='w-full px-6 py-4 font-semibold transition-all text-lg btn-review-sweep disabled:opacity-50 disabled:cursor-not-allowed'
+                style={{ borderRadius: '0.75rem' }}>
+                <span className='uppercase text-white font-bold'>CONFIRM & START SWEEP</span>
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

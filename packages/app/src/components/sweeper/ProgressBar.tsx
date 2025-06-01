@@ -15,12 +15,20 @@ export function ProgressBar({ steps, stepUrls, currentStep }: ProgressBarProps) 
           <div key={index} className='flex items-center'>
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                index <= currentStep ? 'bg-purple-500' : 'bg-slate-600'
-              }`}>
+                index <= currentStep ? 'bg-slate-600' : 'bg-slate-600'
+              }`}
+              style={{
+                backgroundColor: index <= currentStep ? '#BBB424' : undefined,
+                color: index <= currentStep ? '#000000' : '#ffffff'
+              }}>
               {index < currentStep ? <CheckIcon className='w-4 h-4' /> : index + 1}
             </div>
             {index < steps.length - 1 && (
-              <div className={`w-16 h-1 mx-2 ${index < currentStep ? 'bg-purple-500' : 'bg-slate-600'}`}></div>
+              <div 
+                className={`w-16 h-1 mx-2 ${index < currentStep ? 'bg-slate-600' : 'bg-slate-600'}`}
+                style={{
+                  backgroundColor: index < currentStep ? '#BBB424' : undefined
+                }}></div>
             )}
           </div>
         ))}
@@ -31,7 +39,11 @@ export function ProgressBar({ steps, stepUrls, currentStep }: ProgressBarProps) 
             key={index}
             href={index <= currentStep ? stepUrls[index] : '#'}
             className={index <= currentStep ? 'cursor-pointer' : 'cursor-not-allowed'}>
-            <span className={index <= currentStep ? 'text-purple-300' : ''}>{step}</span>
+            <span 
+              className={index <= currentStep ? '' : ''}
+              style={{
+                color: index <= currentStep ? '#BBB424' : undefined
+              }}>{step}</span>
           </Link>
         ))}
       </div>

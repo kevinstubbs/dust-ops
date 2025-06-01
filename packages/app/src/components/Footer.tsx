@@ -10,9 +10,7 @@ export function Footer() {
 
   return (
     <>
-      <div className='place-self-end'>
-        <NetworkStatus />
-      </div>
+      <NetworkStatus />
 
       <footer className='sticky top-[100vh] footer flex justify-center items-center bg-transparent text-white p-4'>
         <p className='font-tanklager text-center'>
