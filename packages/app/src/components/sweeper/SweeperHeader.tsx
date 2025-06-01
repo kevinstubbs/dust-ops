@@ -5,9 +5,10 @@ interface SweeperHeaderProps {
   walletConnected: boolean
   address?: `0x${string}`
   onDisconnect?: () => void
+  onConnect?: () => void
 }
 
-export function SweeperHeader({ walletConnected, address, onDisconnect }: SweeperHeaderProps) {
+export function SweeperHeader({ walletConnected, address, onDisconnect, onConnect }: SweeperHeaderProps) {
   const formatAddress = (addr: string) => {
     return `${addr.slice(0, 4)}...${addr.slice(-4)}`
   }
@@ -43,20 +44,16 @@ export function SweeperHeader({ walletConnected, address, onDisconnect }: Sweepe
           </h1>
         </div>
 
-        {/* Right side navigation and wallet */}
-        <div className="ml-auto flex items-center space-x-6">
-          <Link 
-            href="/examples" 
-            className="text-sm text-slate-400 hover:text-white transition-colors font-medium"
-          >
-            Examples
-          </Link>
-          
-          {walletConnected && address && (
-            <div className="flex items-center space-x-3">
-              <div className="flex items-center space-x-2 text-sm">
+        {/* Right side - wallet display or connect button */}
+        <div className="ml-auto flex items-center space-x-4">
+          {walletConnected && address ? (
+            <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-2">
                 <div className="w-2 h-2 rounded-sm" style={{ backgroundColor: '#BBB424' }}></div>
-                <span className="text-white font-mono">
+                <span 
+                  className="text-white text-lg"
+                  style={{ fontFamily: 'Tanklager, Arial, sans-serif' }}
+                >
                   {formatAddress(address)}
                 </span>
               </div>
@@ -67,12 +64,19 @@ export function SweeperHeader({ walletConnected, address, onDisconnect }: Sweepe
                   console.log('Disconnect button clicked')
                   onDisconnect?.()
                 }}
-                className="btn-disconnect flex items-center justify-center w-8 h-8 hover:scale-105 active:scale-95 transition-transform"
+                className="text-white hover:opacity-70 transition-opacity cursor-pointer p-1"
                 title="Disconnect Wallet"
               >
-                <XMarkIcon className="w-4 h-4" />
+                <XMarkIcon className="w-8 h-8" />
               </button>
             </div>
+          ) : (
+            <button
+              onClick={onConnect}
+              className="btn-header-connect"
+            >
+              <span className="gradient-text">Connect</span>
+            </button>
           )}
         </div>
       </div>
