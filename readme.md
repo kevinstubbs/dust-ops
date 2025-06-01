@@ -47,21 +47,17 @@ We don’t just help you consolidate, swap, and bridge — we help you start fre
 ## Tech Stack
 
 ### Dev & Frontend
-- `React`, `Typescript`, `Tailwind`, `Viem`, `Wagmi`, `Uniswap`, `Coingecko`
+- `React`, `Typescript`, `Tailwind`, `Viem`, `Wagmi`, `Uniswap`, `Coingecko API`
 
 ### Backend / Ops
-- `Next.js`, `Vercel`, `Redis Caching Layer`, `LayerZero`, `Blockscout`, `Foundry`
+- `Next.js`, `Vercel`, `Redis Caching Layer`, `LayerZero`, `Stargate` ,`Blockscout`, `Foundry`
 
 ### Smart Contracts List
 
 | Contract | Address | Network |
 |----------|---------|---------|
-| `ExternalSweeper.sol` | | Base |
-| `MyOApp.sol` | | Optimism |
-| `OriginSweeper.sol` | | Unichain |
-| `Test7702.sol` | | Unichain |
-| `Test7702Factory.sol` | | Base
-| `TestToken.sol` | | Optimism
+| `ExternalSweeper.sol` | 0x1368D7db664751ac371e906C8d144861b85fc4b7 | Optimism, Base, Unichain |
+| `OriginSweeper.sol` | 0x6c97ADcd698e00A4f58757fbc4095048684691e8 | Optimism, Base, Unichain |
 
 ---
 
