@@ -40,7 +40,7 @@ We don’t just help you consolidate, swap, and bridge — we help you start fre
 6. ETH proceeds are sent to a **new wallet**.
 7. Now you have a **fresh wallet with funds**, completely detached from your original onchain identity.
 
-![flow](https://github.com/user-attachments/assets/c190afea-28d4-4e44-9049-0e4252d518d8)
+![flow](https://github.com/user-attachments/assets/772601f8-4fed-45af-af1f-43116f27b38b)
 
 ---
 
