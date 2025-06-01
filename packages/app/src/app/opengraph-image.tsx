@@ -15,7 +15,7 @@ export default async function Image() {
       <div
         tw='flex flex-col items-center justify-center w-full h-full text-white'
         style={{
-          background: 'linear-gradient(to right bottom, rgb(17, 24, 39), rgb(75, 85, 99))',
+          background: '#161515',
         }}>
         <h1 tw='text-8xl'>
           {SITE_EMOJI} {SITE_NAME}

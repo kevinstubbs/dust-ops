@@ -11,7 +11,7 @@ export default function Home() {
   }, [])
 
   return (
-    <div className='fixed inset-0 bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 text-white overflow-auto'>
+    <div className='fixed inset-0 bg-dark-primary text-white overflow-auto'>
       Test
     </div>
   )
