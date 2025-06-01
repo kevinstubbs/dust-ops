@@ -50,15 +50,15 @@ We don’t just help you consolidate, swap, and bridge — we help you start fre
 - `React`, `Typescript`, `Tailwind`, `Viem`, `Wagmi`, `Uniswap`, `Coingecko`
 
 ### Backend / Ops
-- `Next.js`, `Vercel`, `Redis Caching Layer`, `Blockscout`, `Foundry`
+- `Next.js`, `Vercel`, `Redis Caching Layer`, `LayerZero`, `Blockscout`, `Foundry`
 
 ### Smart Contracts List
 
-| Contract | Address | Network | Purpose |
-|----------|---------|---------|---------|
-| `SweepExecutor.sol` | | Base | Batch swaps + forwarding |
-| `PrivacyRouter.sol` | | Optimism | Handles optional Railgun deposit |
-| `DustOpsHelper.sol` | | Unichain | Utility view calls for balances/liquidity |
+| Contract | Address | Network |
+|----------|---------|---------|
+| `SweepExecutor.sol` | | Base |
+| `PrivacyRouter.sol` | | Optimism |
+| `DustOpsHelper.sol` | | Unichain |
 
 ---
 
