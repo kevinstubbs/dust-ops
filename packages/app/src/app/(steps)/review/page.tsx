@@ -2,8 +2,9 @@
 
 import { CurrentConfig } from '@/app/actions/config'
 import { getArbitraryQuote, outTokens } from '@/app/actions/getQuoteAction'
+
 import { usePrivateAccount, usePrivateAccountFull } from '@/app/hooks/usePrivateAccount'
-import { selectedTokensAtom, stepAtom, tokensAtom, totalValueAtom } from '@/atoms/walletAtoms'
+import { railgunAddressAtom, selectedTokensAtom, stepAtom, tokensAtom, totalValueAtom } from '@/atoms/walletAtoms'
 import { TransactionReview } from '@/components/sweeper/TransactionReview'
 import { useAtomValue, useSetAtom } from 'jotai'
 import { useRouter } from 'next/navigation'
@@ -16,6 +17,7 @@ export default function Review() {
   const fullAccount = usePrivateAccountFull()
   const router = useRouter()
   const setStep = useSetAtom(stepAtom)
+  const setRailgunAddress = useSetAtom(railgunAddressAtom)
 
   const totalValue = useAtomValue(totalValueAtom)
   const tokens = useAtomValue(tokensAtom)
@@ -77,11 +79,24 @@ export default function Review() {
     <TransactionReview
       selectedTokens={selectedTokens}
       tokens={tokens}
-      totalValue={totalValue}
       gas={estimatedGas}
-      onStartSweep={() => {
-        // TODO: Send the transaction here.
-        router.push('/privacy-deposit')
+      totalValue={totalValue}
+      onStartSweep={(railgunAddress) => {
+        // Store railgun address if provided
+        if (railgunAddress && railgunAddress.trim()) {
+          setRailgunAddress(railgunAddress.trim())
+        }
+
+        // Add 500ms delay before navigation
+        setTimeout(() => {
+          if (railgunAddress && railgunAddress.trim()) {
+            // If 0ZK address provided, go to privacy deposit
+            router.push('/privacy-deposit')
+          } else {
+            // If no 0ZK address, skip privacy deposit and go to completion without privacy
+            router.push('/completion?privacy=false')
+          }
+        }, 500)
       }}
     />
   )

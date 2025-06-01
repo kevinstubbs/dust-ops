@@ -10,6 +10,23 @@
   font-display: swap;
 }
 
+/* Import Tanklager Fonts */
+@font-face {
+  font-family: 'Tanklager';
+  src: url('/fonts/Tanklager-Original.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Tanklager-Kompakt';
+  src: url('/fonts/Tanklager-Kompakt.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 /* CSS Variables */
 :root {
   --color-dark-bg-primary: #161515;
@@ -60,6 +77,161 @@ body.first-screen-bg {
   body.first-screen-bg {
     background-size: cover;
     background-position: center;
+  }
+}
+
+/* Header Font Styling */
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Tanklager', Arial, sans-serif !important;
+}
+
+.text-subheader {
+  font-family: 'Tanklager', Arial, sans-serif !important;
+  font-weight: normal !important;
+  letter-spacing: 0.1em;
+}
+
+/* Global Text Styling - TANKLAGER for all text outside buttons */
+body,
+p,
+span:not(.gradient-text),
+div:not([class*="btn"]):not([class*="button"]),
+text,
+label,
+.font-tanklager {
+  font-family: 'Tanklager', Arial, sans-serif !important;
+}
+
+/* Exclude button text from TANKLAGER font */
+button,
+.btn,
+.btn-start-scanning,
+.btn-header-connect,
+w3m-button,
+[role="button"] {
+  font-family: inherit !important;
+}
+
+/* Scan Holdings Progress Bar */
+.scan-progress-bar {
+  background: linear-gradient(90deg, #7841B1 0%, #C6233D 40%, #CA871E 75%, #BBB424 100%) !important;
+  animation: progressGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes progressGlow {
+  0% {
+    box-shadow: 0 0 5px rgba(120, 65, 177, 0.5);
+  }
+  100% {
+    box-shadow: 0 0 15px rgba(187, 180, 36, 0.7), 0 0 25px rgba(187, 180, 36, 0.3);
+  }
+}
+
+/* Token Selection Styling - Square corners and yellow theme */
+.token-selection-symbol {
+  width: 0.75rem !important;
+  height: 0.75rem !important;
+  border-radius: 0px !important;
+  background-color: #BBB424 !important;
+}
+
+.token-selection-box {
+  border-radius: 0px !important;
+}
+
+.token-selection-box.selected {
+  border-color: #BBB424 !important;
+  background-color: rgba(187, 180, 36, 0.1) !important;
+}
+
+.token-badge {
+  border-radius: 0px !important;
+}
+
+/* Yellow theme color utility */
+.text-yellow-custom {
+  color: #BBB424 !important;
+}
+
+.bg-yellow-custom {
+  background-color: #BBB424 !important;
+}
+
+.border-yellow-custom {
+  border-color: #BBB424 !important;
+}
+
+/* Review & Sweep Button with gradient background */
+.btn-review-sweep {
+  background: linear-gradient(90deg, #7841B1 0%, #C6233D 40%, #CA871E 75%, #BBB424 100%) !important;
+  border: none !important;
+  transition: all 0.2s ease !important;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-review-sweep:hover:not(:disabled) {
+  transform: scale(1.02) !important;
+  box-shadow: 0 4px 12px rgba(120, 65, 177, 0.3) !important;
+}
+
+.btn-review-sweep:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+  transform: none !important;
+}
+
+.btn-review-sweep span,
+.btn-review-sweep svg {
+  color: #ffffff !important;
+  font-family: 'Tanklager', Arial, sans-serif !important;
+}
+
+/* Low value token glassmorphic styling */
+.token-low-value {
+  background: rgba(0, 0, 0, 0.1) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  opacity: 0.6 !important;
+  transition: all 0.3s ease !important;
+}
+
+.token-low-value:hover {
+  background: rgba(0, 0, 0, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+  opacity: 0.8 !important;
+}
+
+/* Black and white color variations instead of blue */
+.token-selection-box:not(.selected):not(.token-low-value) {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+  background-color: rgba(0, 0, 0, 0.3) !important;
+}
+
+.token-selection-box:not(.selected):not(.token-low-value):hover {
+  border-color: rgba(255, 255, 255, 0.4) !important;
+  background-color: rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Gradient spinning icon */
+.spin-gradient {
+  background: linear-gradient(90deg, #7841B1 0%, #C6233D 40%, #CA871E 75%, #BBB424 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  animation: gradientSpin 2s linear infinite;
+}
+
+@keyframes gradientSpin {
+  0% {
+    transform: rotate(0deg);
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+    filter: hue-rotate(360deg);
   }
 }
 
@@ -164,6 +336,132 @@ body.first-screen-bg {
   outline: none !important;
 }
 
+/* Header Connect Button - Same style as first screen button */
+.btn-header-connect {
+  background: #000000 !important;
+  border: none !important;
+  padding: 0.5rem 1rem !important;
+  border-radius: 0.75rem !important;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.btn-header-connect .gradient-text {
+  font-family: 'MATAO', Arial, sans-serif !important;
+  font-weight: normal !important;
+  font-size: 0.875rem !important;
+  background: linear-gradient(90deg, #6E3F8E 0%, #9B2339 24%, #BCB74B 49%, #BCB74B 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  display: inline-block;
+}
+
+.btn-header-connect:disabled {
+  opacity: 0.5 !important;
+  cursor: not-allowed !important;
+}
+
+.btn-header-connect:hover:not(:disabled) {
+  transform: scale(1.02);
+}
+
+/* Override any DaisyUI button styles for header connect */
+.btn-header-connect:focus,
+.btn-header-connect:active,
+.btn-header-connect.btn {
+  background: #000000 !important;
+  border: none !important;
+  outline: none !important;
+}
+
+/* Style w3m-button to match gradient button */
+w3m-button {
+  --w3m-accent: #000000 !important;
+  --w3m-color-mix: #000000 !important;
+  --w3m-color-mix-strength: 0 !important;
+  --w3m-border-radius-master: 0.75rem !important;
+}
+
+/* More aggressive targeting for w3m-button internal elements */
+w3m-button,
+w3m-button *,
+w3m-button button,
+w3m-button [role="button"],
+w3m-button .w3m-button,
+w3m-button::part(button),
+w3m-button::shadow button,
+w3m-button::shadow .w3m-button {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  border: none !important;
+  border-radius: 0.75rem !important;
+  padding: 0.5rem 1rem !important;
+  transition: all 0.2s ease !important;
+  box-shadow: none !important;
+  outline: none !important;
+}
+
+/* Force override any purple/accent colors */
+w3m-button *[style*="background"],
+w3m-button *[style*="color"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+/* Target text content with gradient */
+w3m-button *,
+w3m-button span,
+w3m-button button span,
+w3m-button [part="button"] span,
+w3m-button .w3m-text,
+w3m-button button,
+w3m-button [role="button"] {
+  font-family: 'MATAO', Arial, sans-serif !important;
+  font-weight: normal !important;
+  font-size: 0.875rem !important;
+  background: linear-gradient(90deg, #6E3F8E 0%, #9B2339 24%, #BCB74B 49%, #BCB74B 100%) !important;
+  background-color: #000000 !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Hover effects */
+w3m-button:hover,
+w3m-button:hover *,
+w3m-button:hover button,
+w3m-button:hover [part="button"] {
+  transform: scale(1.02) !important;
+  background: #000000 !important;
+  background-color: #000000 !important;
+}
+
+/* Force override WalletConnect CSS custom properties */
+w3m-button {
+  --w3m-accent-color: #000000 !important;
+  --w3m-accent-fill-color: #000000 !important;
+  --w3m-background-color: #000000 !important;
+  --w3m-foreground-color: transparent !important;
+  --w3m-border-color: transparent !important;
+}
+
+/* Try to target any nested buttons with specific selectors */
+w3m-button button[data-variant],
+w3m-button [data-variant="main"],
+w3m-button [data-variant="accent"] {
+  background: #000000 !important;
+  background-color: #000000 !important;
+  color: transparent !important;
+}
+
 /* Professional Header Styles */
 .header-professional {
   background-color: #161515;
@@ -196,12 +494,6 @@ body.first-screen-bg {
 .btn-disconnect:hover {
   background: rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.3);
-}
-
-.text-subheader {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-  font-weight: 500;
-  letter-spacing: 0.1em;
 }
 
 /* Dark Theme Background Utilities */

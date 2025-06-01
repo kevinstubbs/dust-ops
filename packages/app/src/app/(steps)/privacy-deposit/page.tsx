@@ -22,5 +22,14 @@ export default function PrivacyDeposit() {
     }
   }, [account])
 
+  // Navigate to completion with privacy after processing animation completes
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push('/completion?privacy=true')
+    }, 4500) // Slightly longer than the 4-second progress animation
+
+    return () => clearTimeout(timer)
+  }, [router])
+
   return <SweepProcessing />
 }
