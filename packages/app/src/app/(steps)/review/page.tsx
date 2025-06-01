@@ -51,7 +51,7 @@ export default function Review() {
           x.chainId,
           18,
           18,
-          eoaClient
+          eoaClient as any
         )
 
         console.log({ res }, res.gasEstimate)

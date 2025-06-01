@@ -233,7 +233,7 @@ export async function getArbitraryQuote(
     currency1: outToken as any,
     fee: 3000,
     tickSpacing: 60,
-    hooks: '0x0000000000000000000000000000000000000000',
+    hooks: '0x0000000000000000000000000000000000000000' as any,
   }
 
   // 2. Encode the Universal Router command

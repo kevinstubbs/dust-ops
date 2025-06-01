@@ -53,7 +53,7 @@ const receivers = [
   '0xa0Ee7A142d267C1f36714E4a8F75612F20a79720',
 ] as const
 
-export const abi = [
+const abi = [
   { type: 'function', name: 'initialize', inputs: [], outputs: [], stateMutability: 'payable' },
   { type: 'function', name: 'ping', inputs: [], outputs: [], stateMutability: 'nonpayable' },
   {
