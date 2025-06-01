@@ -10,10 +10,10 @@ export function Footer() {
 
   return (
     <>
-      <NetworkStatus />
+     
 
       <footer className='sticky top-[100vh] footer flex justify-center items-center bg-transparent text-white p-4'>
-        <p className='font-tanklager text-center'>
+        <p className='font-tanklager text-center text-3xl'>
           {isFirstScreen 
             ? 'Built with <3 at ETHGlobal Prague 2025 - One Click. No Echo.'
             : '/DUST.OPS'
