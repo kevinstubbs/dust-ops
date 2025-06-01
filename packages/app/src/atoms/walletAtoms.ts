@@ -2,11 +2,9 @@ import { atom } from 'jotai'
 
 export type Token = {
   id: number
-  address: string
   symbol: string
   name: string
   chain: string
-  chainId: number
   balance: string
   value: string
   liquid: boolean

@@ -10,7 +10,7 @@ export function Footer() {
 
   return (
     <>
-      <NetworkStatus />
+     
 
       <footer className='sticky top-[100vh] footer flex justify-center items-center bg-transparent text-white p-4'>
         <p className='font-tanklager text-center'>

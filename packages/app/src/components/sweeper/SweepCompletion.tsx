@@ -53,8 +53,9 @@ export function SweepCompletion({ usedPrivacy = false, selectedTokens = [], rail
       const days = Math.floor(timeLeft / (24 * 60 * 60 * 1000))
       const hours = Math.floor((timeLeft % (24 * 60 * 60 * 1000)) / (60 * 60 * 1000))
       const minutes = Math.floor((timeLeft % (60 * 60 * 1000)) / (60 * 1000))
+      const seconds = Math.floor((timeLeft % (60 * 1000)) / 1000)
 
-      setTimeRemaining(`${days} days, ${hours} hours, ${minutes} minutes remaining`)
+      setTimeRemaining(`${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds remaining`)
       
       // Calculate progress: 3 days = 0%, 0 days = 100%
       const totalDuration = 3 * 24 * 60 * 60 * 1000 // 3 days in milliseconds
@@ -66,8 +67,8 @@ export function SweepCompletion({ usedPrivacy = false, selectedTokens = [], rail
     // Initial update
     updateCountdown()
     
-    // Update every minute
-    const interval = setInterval(updateCountdown, 60000)
+    // Update every second to show real-time countdown
+    const interval = setInterval(updateCountdown, 1000)
     
     return () => clearInterval(interval)
   }, [usedPrivacy])
@@ -84,7 +85,7 @@ export function SweepCompletion({ usedPrivacy = false, selectedTokens = [], rail
   if (!usedPrivacy) {
     return (
       <div className="py-8 min-h-screen flex flex-col items-center justify-center">
-        <div className="text-center mb-12">
+        <div className="text-center mb-12" style={{ transform: 'translateY(-15vh)' }}>
           <div 
             className="w-32 h-32 rounded-full flex items-center justify-center mx-auto mb-8"
             style={{
@@ -96,14 +97,14 @@ export function SweepCompletion({ usedPrivacy = false, selectedTokens = [], rail
           <p className="text-slate-300 text-lg font-tanklager mb-8">
             Your tokens have been successfully swept!
           </p>
+          
+          <button
+            onClick={handleReturnHome}
+            className='px-8 py-4 font-semibold transition-all text-lg btn-review-sweep'
+            style={{ borderRadius: '0.75rem' }}>
+            <span className='uppercase text-white font-bold'>START NEW SWEEP</span>
+          </button>
         </div>
-        
-        <button
-          onClick={handleReturnHome}
-          className='px-8 py-4 font-semibold transition-all text-lg btn-review-sweep'
-          style={{ borderRadius: '0.75rem' }}>
-          <span className='uppercase text-white font-bold'>START NEW SWEEP</span>
-        </button>
       </div>
     )
   }

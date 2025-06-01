@@ -520,3 +520,22 @@ body {
   padding: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+/* Gradient Link Styling for RAILGUN documentation and similar links */
+.gradient-link {
+  font-weight: bold !important;
+  transition: all 0.3s ease !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  background: linear-gradient(90deg, #7841B1 0%, #C6233D 40%, #CA871E 75%, #BBB424 100%) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  -webkit-text-fill-color: transparent !important;
+  color: transparent !important;
+  cursor: pointer !important;
+}
+
+.gradient-link:hover {
+  transform: scale(1.05) !important;
+  text-decoration: none !important;
+}
