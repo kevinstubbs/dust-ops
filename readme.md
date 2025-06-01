@@ -47,30 +47,18 @@ We don’t just help you consolidate, swap, and bridge — we help you start fre
 ## Tech Stack
 
 ### Dev & Frontend
-- `Next.js` + `TailwindCSS` — UI/UX
-- `RainbowKit` / `ethers.js` — Wallet integration
-- `Railgun SDK` — Privacy layer
-- `1inch Aggregation API` — Liquidity checks
-- `viem` — Modern ethers alternative for chain interaction
+- `React`, `Typescript`, `Tailwind`, `Viem`, `Wagmi`, `Uniswap`, `Coingecko`
 
 ### Backend / Ops
-- `Node.js` — Orchestrating sweep & swap logic
-- `Hardhat` — Smart contract testing
-- `Ethereum JSON-RPC` — Chain interactions
-- `Cross-chain RPCs` — Optimism, Base, Unichain nodes
+- `Next.js`, `Vercel`, `Redis Caching Layer`, `Blockscout`, `Foundry`
 
----
-
-## Smart Contracts List
+### Smart Contracts List
 
 | Contract | Address | Network | Purpose |
 |----------|---------|---------|---------|
 | `SweepExecutor.sol` | | Base | Batch swaps + forwarding |
 | `PrivacyRouter.sol` | | Optimism | Handles optional Railgun deposit |
 | `DustOpsHelper.sol` | | Unichain | Utility view calls for balances/liquidity |
-
-Contracts are deployed on testnets and pre-configured for the hackathon scope.
-Future upgrades can allow plug-and-play EVM chain support, upgradeable logic, and gas abstraction.
 
 ---
 
