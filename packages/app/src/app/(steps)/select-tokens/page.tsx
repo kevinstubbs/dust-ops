@@ -32,10 +32,12 @@ export default function SelectTokens() {
     return sum + parseFloat(token?.value.replace('$', '').replace(',', '') || '0')
   }, 0)
 
-  if (!account && typeof window !== 'undefined') {
-    router.replace('/')
-    return null
-  }
+  useEffect(() => {
+    if (!account && typeof window !== 'undefined') {
+      router.replace('/')
+    }
+  }, [account])
+
   return (
     <TokenSelection
       tokens={tokens}

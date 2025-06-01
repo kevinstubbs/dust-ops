@@ -1,9 +1,9 @@
 import { ShieldCheckIcon } from '@heroicons/react/24/outline'
 import { useState } from 'react'
-import type { Token } from '@/app/(steps)/page'
+import type { Token } from '@/atoms/walletAtoms'
 
 interface TransactionReviewProps {
-  selectedTokens: number[]
+  selectedTokens: Token[]
   tokens: Token[]
   totalValue: number
   onStartSweep: () => void

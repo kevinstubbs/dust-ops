@@ -1,6 +1,6 @@
+import { Token } from '@/atoms/walletAtoms'
 import { TokenPriceInfo } from '@/utils/simplePricing'
 import { FetchedToken } from '@/utils/tokenFetcher'
-import { Token } from '../page'
 
 // Convert fetched tokens to Token format with pricing
 export function convertFetchedTokensToTokens(fetchedTokens: FetchedToken[], priceData?: TokenPriceInfo[]): Token[] {

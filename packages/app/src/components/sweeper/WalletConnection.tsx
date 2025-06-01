@@ -41,14 +41,16 @@ export function WalletConnection() {
         </p>
       </div>
       <div className='my-8'>Account: {account}</div>
+      <Link href='/scan-holdings'>
+        <button className='btn' disabled={!account || !pkey?.trim()?.length}>
+          Start scanning
+        </button>
+      </Link>
       {account ? (
         <div className='flex justify-center'>
           <Connect />
         </div>
       ) : null}
-      <Link href='/scan-holdings'>
-        <button className='btn'>Start scanning</button>
-      </Link>
     </div>
   )
 }

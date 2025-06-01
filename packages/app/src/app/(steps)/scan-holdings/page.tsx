@@ -66,10 +66,11 @@ export default function ScanHoldings() {
       })
   }, [account])
 
-  if (!account && typeof window !== 'undefined') {
-    router.replace('/')
-    return null
-  }
+  useEffect(() => {
+    if (!account && typeof window !== 'undefined') {
+      router.replace('/')
+    }
+  }, [account])
 
   // getQuoteAction(CurrentConfig.tokens.amountIn, CurrentConfig.tokens.in.decimals, CurrentConfig.tokens.out.decimals)
   //     //   .then(console.log)
