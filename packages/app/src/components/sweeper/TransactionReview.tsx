@@ -6,10 +6,11 @@ interface TransactionReviewProps {
   selectedTokens: Token[]
   tokens: Token[]
   totalValue: number
+  gas: bigint
   onStartSweep: () => void
 }
 
-export function TransactionReview({ selectedTokens, totalValue, onStartSweep }: TransactionReviewProps) {
+export function TransactionReview({ selectedTokens, totalValue, gas, onStartSweep }: TransactionReviewProps) {
   const [isToggled, setIsToggled] = useState(false)
 
   useEffect(() => {
@@ -42,7 +43,11 @@ export function TransactionReview({ selectedTokens, totalValue, onStartSweep }: 
               </div>
               <div className='flex justify-between'>
                 <span className='text-slate-400'>Estimated Gas:</span>
-                <span>$45.20</span>
+                <span>${(Number(gas) / 1e9) * 20 * 0.66}</span>
+                {/* 20 is a guess about gas price (gwei to pay per gas unit) */}
+                {/* TODO: multiply gas by gas price and then by $NATIVE_TOKEN:USD */}
+                {/* optimism:usd $0.66 */}
+                {/* eth:usd $2506.39 */}
               </div>
               <div className='flex justify-between'>
                 <span className='text-slate-400'>Slippage:</span>

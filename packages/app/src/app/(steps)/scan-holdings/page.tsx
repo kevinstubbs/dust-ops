@@ -1,6 +1,6 @@
 'use client'
 
-import { usePrivateAccount } from '@/app/hooks/usePrivateAccount'
+import { usePrivateAccount, usePrivateAccountFull } from '@/app/hooks/usePrivateAccount'
 import { stepAtom, tokensAtom } from '@/atoms/walletAtoms'
 import { getMultipleTokenPrices } from '@/utils/simplePricing'
 import { fetchTokensFromAPIs } from '@/utils/tokenFetcher'
@@ -9,9 +9,14 @@ import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
 import { convertFetchedTokensToTokens } from '../select-tokens/token-utils'
 import { ArrowPathIcon } from '@heroicons/react/24/outline'
+import { createWalletClient, extractChain, http, zeroAddress } from 'viem'
+import { getArbitraryQuote, outTokens } from '@/app/actions/getQuoteAction'
+import { mainnet, optimism, base, unichain } from 'viem/chains'
+import { CurrentConfig } from '@/app/actions/config'
 
 export default function ScanHoldings() {
   const account = usePrivateAccount()
+  const fullAccount = usePrivateAccountFull()
   const router = useRouter()
   const [tokens, setTokens] = useAtom(tokensAtom)
   const [numChecked, setNumChecked] = useState(0)
@@ -23,11 +28,46 @@ export default function ScanHoldings() {
   }, [])
 
   useEffect(() => {
-    if (!account) return
+    if (!fullAccount) return
 
-    fetchTokensFromAPIs(account, setNumChecked, setTotalNumChains)
-      .then(async (fetchedTokens) => {
-        console.log('Fetched tokens:', fetchedTokens)
+    fetchTokensFromAPIs(fullAccount.address, setNumChecked, setTotalNumChains)
+      .then(async (_rawTokens) => {
+        console.log('Fetched tokens:', _rawTokens)
+        const fetchedTokens = []
+
+        for (let i = 0; i < _rawTokens.length; i++) {
+          const x = _rawTokens[i]
+          try {
+            const eoaClient = createWalletClient({
+              account: fullAccount,
+              chain: extractChain({
+                chains: [mainnet, optimism, base, unichain],
+                id: x.chainId as any, // Replace with your desired chain ID
+              }),
+              transport: http(CurrentConfig.rpc[x.chainId as any]),
+            })
+            console.log(CurrentConfig.rpc[x.chainId as any])
+
+            const res = await getArbitraryQuote(
+              BigInt(parseFloat(x.balance) * 1e18),
+              x.contractAddress,
+              outTokens[x.chainId] || zeroAddress,
+              // zeroAddress,
+              x.chainId,
+              18,
+              18,
+              eoaClient
+            )
+
+            console.log({ res })
+            fetchedTokens.push(x)
+          } catch (e) {
+            if (x.chainId === 10) {
+              console.warn(e, x)
+            }
+            // console.warn(e)
+          }
+        }
 
         // Fetch prices for the tokens
         const tokensForPricing = fetchedTokens.map((token) => ({
@@ -64,7 +104,7 @@ export default function ScanHoldings() {
         console.error('Error fetching tokens:', error)
         // On error, proceed to next step anyway
       })
-  }, [account])
+  }, [fullAccount])
 
   useEffect(() => {
     if (!account && typeof window !== 'undefined') {
