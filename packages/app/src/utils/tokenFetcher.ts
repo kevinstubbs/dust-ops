@@ -81,7 +81,7 @@ export async function fetchTokensFromAPIs(
     const tokens: FetchedToken[] = []
 
     // Process Base response (ERC-20 tokens)
-    if (baseResponse.status === 'fulfilled' && baseResponse.value.ok) {
+    if (baseResponse?.status === 'fulfilled' && baseResponse.value.ok) {
       try {
         const baseData: ApiResponse = await baseResponse.value.json()
         console.log('Base response:', baseData)
@@ -105,7 +105,7 @@ export async function fetchTokensFromAPIs(
       } catch (error) {
         console.error('Error parsing Base response:', error)
       }
-    } else if (baseResponse.status === 'fulfilled') {
+    } else if (baseResponse?.status === 'fulfilled') {
       console.error('Base API error:', baseResponse.value.status, baseResponse.value.statusText)
     } else {
       console.error('Base request failed:', baseResponse.reason)
@@ -115,7 +115,7 @@ export async function fetchTokensFromAPIs(
     }
 
     // Process Base native token balance
-    if (baseBalanceResponse.status === 'fulfilled' && baseBalanceResponse.value.ok) {
+    if (baseBalanceResponse?.status === 'fulfilled' && baseBalanceResponse.value.ok) {
       try {
         const baseBalanceData = await baseBalanceResponse.value.json()
         console.log('Base balance response:', baseBalanceData)
@@ -140,7 +140,7 @@ export async function fetchTokensFromAPIs(
     }
 
     // Process Optimism response (ERC-20 tokens)
-    if (optimismResponse.status === 'fulfilled' && optimismResponse.value.ok) {
+    if (optimismResponse?.status === 'fulfilled' && optimismResponse.value.ok) {
       try {
         const optimismData: ApiResponse = await optimismResponse.value.json()
         console.log('Optimism response:', optimismData)
@@ -174,7 +174,7 @@ export async function fetchTokensFromAPIs(
     }
 
     // Process Optimism native token balance
-    if (optimismBalanceResponse.status === 'fulfilled' && optimismBalanceResponse.value.ok) {
+    if (optimismBalanceResponse?.status === 'fulfilled' && optimismBalanceResponse.value.ok) {
       try {
         const optimismBalanceData = await optimismBalanceResponse.value.json()
         console.log('Optimism balance response:', optimismBalanceData)
@@ -199,7 +199,7 @@ export async function fetchTokensFromAPIs(
     }
 
     // Process Unichain response (ERC-20 tokens)
-    if (unichainResponse.status === 'fulfilled' && unichainResponse.value.ok) {
+    if (unichainResponse?.status === 'fulfilled' && unichainResponse.value.ok) {
       try {
         const unichainData: ApiResponse = await unichainResponse.value.json()
         console.log('Unichain response:', unichainData)
@@ -233,7 +233,7 @@ export async function fetchTokensFromAPIs(
     }
 
     // Process Unichain native token balance
-    if (unichainBalanceResponse.status === 'fulfilled' && unichainBalanceResponse.value.ok) {
+    if (unichainBalanceResponse?.status === 'fulfilled' && unichainBalanceResponse.value.ok) {
       try {
         const unichainBalanceData = await unichainBalanceResponse.value.json()
         console.log('Unichain balance response:', unichainBalanceData)

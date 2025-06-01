@@ -1,11 +1,13 @@
 import { CheckIcon } from '@heroicons/react/24/outline'
+import Link from 'next/link'
 
 interface ProgressBarProps {
   steps: string[]
+  stepUrls: string[]
   currentStep: number
 }
 
-export function ProgressBar({ steps, currentStep }: ProgressBarProps) {
+export function ProgressBar({ steps, stepUrls, currentStep }: ProgressBarProps) {
   return (
     <div className='max-w-6xl mx-auto px-6 py-6'>
       <div className='flex items-center justify-between mb-2'>
@@ -25,9 +27,12 @@ export function ProgressBar({ steps, currentStep }: ProgressBarProps) {
       </div>
       <div className='flex justify-between text-xs text-slate-400 cursor-pointer'>
         {steps.map((step, index) => (
-          <span key={index} className={index <= currentStep ? 'text-purple-300' : ''}>
-            {step}
-          </span>
+          <Link
+            key={index}
+            href={index <= currentStep ? stepUrls[index] : '#'}
+            className={index <= currentStep ? 'cursor-pointer' : 'cursor-not-allowed'}>
+            <span className={index <= currentStep ? 'text-purple-300' : ''}>{step}</span>
+          </Link>
         ))}
       </div>
     </div>
