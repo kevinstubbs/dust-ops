@@ -56,8 +56,8 @@ We don’t just help you consolidate, swap, and bridge — we help you start fre
 
 | Contract | Address | Network |
 |----------|---------|---------|
-| `ExternalSweeper.sol` | 0x1368D7db664751ac371e906C8d144861b85fc4b7 | Optimism, Base, Unichain |
-| `OriginSweeper.sol` | 0x6c97ADcd698e00A4f58757fbc4095048684691e8 | Optimism, Base, Unichain |
+| `ExternalSweeper.sol` | 0x1368D7db664751ac371e906C8d144861b85fc4b7 | Unichain, Base |
+| `OriginSweeper.sol` | 0x6c97ADcd698e00A4f58757fbc4095048684691e8 | Optimism |
 
 ---
 
