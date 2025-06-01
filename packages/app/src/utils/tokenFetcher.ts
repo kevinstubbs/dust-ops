@@ -1,3 +1,5 @@
+import { base, optimism, unichain } from 'viem/chains'
+
 type ApiToken = {
   balance: string
   contractAddress: string
@@ -20,6 +22,7 @@ export type FetchedToken = {
   decimals: string
   type: string
   chain: string
+  chainId: number
   contractAddress: string
 }
 
@@ -100,10 +103,12 @@ export async function fetchTokensFromAPIs(
             .filter((token) => token.type === 'ERC-20')
             .map((token) => ({
               name: token.name || 'Unknown Token',
+              address: token.contractAddress,
               balance: token.balance,
               decimals: token.decimals,
               type: token.type,
               chain: 'Base',
+              chainId: base.id,
               contractAddress: token.contractAddress,
             }))
           tokens.push(...baseTokens)
@@ -138,6 +143,7 @@ export async function fetchTokensFromAPIs(
               decimals: '18',
               type: 'Native',
               chain: 'Base',
+              chainId: base.id,
               contractAddress: '0x0000000000000000000000000000000000000000', // Native token placeholder
             })
             console.log('Found native ETH balance on Base:', balance)
@@ -160,9 +166,11 @@ export async function fetchTokensFromAPIs(
             .map((token) => ({
               name: token.name || 'Unknown Token',
               balance: token.balance,
+              address: token.contractAddress,
               decimals: token.decimals,
               type: token.type,
               chain: 'Optimism',
+              chainId: optimism.id,
               contractAddress: token.contractAddress,
             }))
           tokens.push(...optimismTokens)
@@ -197,6 +205,7 @@ export async function fetchTokensFromAPIs(
               decimals: '18',
               type: 'Native',
               chain: 'Optimism',
+              chainId: optimism.id,
               contractAddress: '0x0000000000000000000000000000000000000000', // Native token placeholder
             })
             console.log('Found native ETH balance on Optimism:', balance)
@@ -219,9 +228,11 @@ export async function fetchTokensFromAPIs(
             .map((token) => ({
               name: token.name || 'Unknown Token',
               balance: token.balance,
+              address: token.contractAddress,
               decimals: token.decimals,
               type: token.type,
               chain: 'Unichain',
+              chainId: unichain.id,
               contractAddress: token.contractAddress,
             }))
           tokens.push(...unichainTokens)
@@ -256,6 +267,7 @@ export async function fetchTokensFromAPIs(
               decimals: '18',
               type: 'Native',
               chain: 'Unichain',
+              chainId: unichain.id,
               contractAddress: '0x0000000000000000000000000000000000000000', // Native token placeholder
             })
             console.log('Found native ETH balance on Unichain:', balance)

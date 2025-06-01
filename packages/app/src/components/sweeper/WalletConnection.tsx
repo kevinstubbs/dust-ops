@@ -33,6 +33,7 @@ export function WalletConnection() {
             pattern='^0x.*'
             title='Must be a valid EVM private key, starting with 0x'
             value={pkey}
+            autoComplete='off'
             onChange={(e) => setPkey(e.target.value)}
           />
         </label>

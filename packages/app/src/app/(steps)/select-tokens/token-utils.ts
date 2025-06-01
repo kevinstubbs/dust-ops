@@ -42,10 +42,13 @@ export function convertFetchedTokensToTokens(fetchedTokens: FetchedToken[], pric
       }
 
       return {
+        ...token,
         id: index + 1,
         symbol: symbol,
         name: name,
         chain: token.chain,
+        chainId: token.chainId,
+        address: token.contractAddress,
         balance: displayBalance.toLocaleString(undefined, {
           minimumFractionDigits: 0,
           maximumFractionDigits: 6,
